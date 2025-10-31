@@ -33,7 +33,7 @@
             // 
             // btnBack
             // 
-            btnBack.Location = new Point(12, 680);
+            btnBack.Location = new Point(25, 680);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(128, 29);
             btnBack.TabIndex = 0;
@@ -46,7 +46,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(1006, 721);
+            ClientSize = new Size(1006, 717);
             Controls.Add(btnBack);
             Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.Fixed3D;

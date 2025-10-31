@@ -2,61 +2,61 @@
 
 namespace APATA_NEA_Project.Classes
 {
-    internal class Cell(int row, int column)
+    internal class Node(Graph maze, int Row, int Column)
     {
-        private readonly int row = row;
-        private readonly int column = column;
-        public int x;
-        public int y;
+        private readonly Graph maze = maze;
+        public readonly int Row = Row;
+        public readonly int Column = Column;
 
-        public bool topWall = true;
-        public bool rightWall = true;
-        public bool bottomWall = true;
-        public bool leftWall = true;
+        public int X;
+        public int Y;
 
-        public bool visited = false;
+        public bool TopWall = true;
+        public bool RightWall = true;
+        public bool BottomWall = true;
+        public bool LeftWall = true;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:Simplify collection initialization")]
+        public bool Visited = false;
 
-        public List<Cell> FindUnvisitedNeighbours(Cell[,] nodes, int rows, int columns)
+        public List<Node> FindUnvisitedNeighbours(Node[,] Cells, int rows, int columns)
         {
-            List<Cell> unvisitedNeighbours = new();
+            List<Node> unvisitedNeighbours = new();
 
-            if (row > 0)
+            if (Row != 0)
             {
-                Cell top = nodes[row - 1, column];
+                Node top = Cells[Row - 1, Column];
 
-                if (!top.visited)
+                if (!top.Visited)
                 {
                     unvisitedNeighbours.Add(top);
                 }
             }
 
-            if (column < columns - 1)
+            if (Column != columns - 1)
             {
-                Cell right = nodes[row, column + 1];
+                Node right = Cells[Row, Column + 1];
 
-                if (!right.visited)
+                if (!right.Visited)
                 {
                     unvisitedNeighbours.Add(right);
                 }
             }
 
-            if (row < rows - 1)
+            if (Row != rows - 1)
             {
-                Cell bottom = nodes[row + 1, column];
+                Node bottom = Cells[Row + 1, Column];
 
-                if (!bottom.visited)
+                if (!bottom.Visited)
                 {
                     unvisitedNeighbours.Add(bottom);
                 }
             }
 
-            if (column > 0)
+            if (Column != 0)
             {
-                Cell left = nodes[row, column - 1];
+                Node left = Cells[Row, Column - 1];
 
-                if (!left.visited)
+                if (!left.Visited)
                 {
                     unvisitedNeighbours.Add(left);
                 }
@@ -65,57 +65,57 @@ namespace APATA_NEA_Project.Classes
             return unvisitedNeighbours;
         }
 
-        public void RemoveWalls(Cell next, Graphics graphics)
+        public void RemoveWalls(Node next, Graphics graphics)
         {
-            int rowDifference = row - next.row;
+            int rowDifference = Row - next.Row;
 
             if (rowDifference == 1)
             {
-                topWall = false;
-                next.bottomWall = false;
+                TopWall = false;
+                next.BottomWall = false;
             }
 
             else if (rowDifference == -1)
             {
-                bottomWall = false;
-                next.topWall = false;
+                BottomWall = false;
+                next.TopWall = false;
             }
 
-            int columnDifference = column - next.column;
+            int columnDifference = Column - next.Column;
 
             if (columnDifference == 1)
             {
-                leftWall = false;
-                next.rightWall = false;
+                LeftWall = false;
+                next.RightWall = false;
             }
 
             else if (columnDifference == -1)
             {
-                rightWall = false;
-                next.leftWall = false;
+                RightWall = false;
+                next.LeftWall = false;
             }
 
             using Pen path = new(Color.White, 1.5f);
-            const int cellWidth = Graph.cellWidth;
-
-            if (!topWall && !next.bottomWall)
+            int CellWidth = maze.CellWidth;
+            
+            if (!TopWall && !next.BottomWall)
             {
-                graphics.DrawLine(path, x + 1, y, x + cellWidth - 1, y);
+                graphics.DrawLine(path, X + 1, Y, X + CellWidth - 1, Y);
             }
 
-            if (!rightWall && !next.leftWall)
+            if (!RightWall && !next.LeftWall)
             {
-                graphics.DrawLine(path, x + cellWidth, y + 1, x + cellWidth, y + cellWidth - 1);
+                graphics.DrawLine(path, X + CellWidth, Y + 1, X + CellWidth, Y + CellWidth - 1);
             }
 
-            if (!bottomWall && !next.topWall)
+            if (!BottomWall && !next.TopWall)
             {
-                graphics.DrawLine(path, x + cellWidth - 1, y + cellWidth, x + 1, y + cellWidth);
+                graphics.DrawLine(path, X + CellWidth - 1, Y + CellWidth, X + 1, Y + CellWidth);
             }
 
-            if (!leftWall && !next.rightWall)
+            if (!LeftWall && !next.RightWall)
             {
-                graphics.DrawLine(path, x, y + cellWidth - 1, x, y + 1);
+                graphics.DrawLine(path, X, Y + CellWidth - 1, X, Y + 1);
             }
         }
     }

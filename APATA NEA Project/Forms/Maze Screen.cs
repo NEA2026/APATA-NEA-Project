@@ -6,20 +6,32 @@ namespace APATA_NEA_Project.Forms
     {
         private readonly int rows;
         private readonly int columns;
+        private readonly int percentage;
 
-        public MazeScreen(int rows, int columns)
+        public MazeScreen(int rows, int columns, int percentage)
         {
             InitializeComponent();
             this.rows = rows;
             this.columns = columns;
+            this.percentage = percentage;
         }
 
         private void Maze_Paint(object sender, PaintEventArgs e)
         {
-            Graph graph = new(rows, columns);
-            graph.AddCells();
-            graph.AddWalls(e.Graphics);
-            graph.GenerateMaze(e.Graphics);
+            Graph maze = new(rows, columns);
+            maze.AddCells();
+            maze.AddWalls(e.Graphics);
+            maze.GenerateMaze(e.Graphics);
+
+            if (percentage == 100)
+            {
+                maze.RemoveDeadEnds(e.Graphics);
+            }
+
+            else if (percentage > 0 && percentage < 100)
+            {
+                maze.RemoveDeadEnds(e.Graphics, percentage);
+            }
         }
 
         private void btnBack_Click(object sender, EventArgs e)

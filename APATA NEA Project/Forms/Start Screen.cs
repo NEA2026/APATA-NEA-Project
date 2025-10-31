@@ -11,7 +11,7 @@
         {
             int rows;
             int columns;
-
+            
             try
             {
                 rows = Convert.ToInt32(txtHeight.Text.Trim());
@@ -20,17 +20,36 @@
 
             catch
             {
-                MessageBox.Show("Input error: Please enter integers greater than 5 and less than 25.", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Input error: Please enter integers between 5 and 50 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (rows > 25 || rows < 5 || columns > 25 || columns < 5)
+            if (rows > 50 || rows < 5 || columns > 50 || columns < 5)
             {
-                MessageBox.Show("Input error: Height or width must be greater than 5 and less than 25.", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Input error: Height or width must be between 5 and 50 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            MazeScreen mazeScreen = new(rows, columns);
+            int percentage;
+
+            try
+            {
+                percentage = Convert.ToInt32(txtRemoveDeadends.Text.Trim());
+            }
+
+            catch
+            {
+                MessageBox.Show("Input error: Please enter an integer between 0 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (percentage < 0 || percentage > 100)
+            {
+                MessageBox.Show("Input error: Remove Deadends must be between 0 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MazeScreen mazeScreen = new(rows, columns, percentage);
             Hide();
             mazeScreen.Show();
         }

@@ -32,8 +32,11 @@
             txtWidth = new TextBox();
             txtHeight = new TextBox();
             grpMazeSize = new GroupBox();
-            lblHCells = new Label();
-            lblWCells = new Label();
+            lblPercentage = new Label();
+            lblRemoveDeadends = new Label();
+            txtRemoveDeadends = new TextBox();
+            lblCellsHeight = new Label();
+            lblCellsWidth = new Label();
             lblHeight = new Label();
             lblWidth = new Label();
             lblTitle = new Label();
@@ -52,22 +55,29 @@
             // 
             // txtWidth
             // 
-            txtWidth.Location = new Point(62, 34);
+            txtWidth.Location = new Point(63, 34);
             txtWidth.Name = "txtWidth";
             txtWidth.Size = new Size(64, 24);
             txtWidth.TabIndex = 1;
+            txtWidth.Text = "5";
+            txtWidth.TextAlign = HorizontalAlignment.Right;
             // 
             // txtHeight
             // 
-            txtHeight.Location = new Point(62, 70);
+            txtHeight.Location = new Point(63, 62);
             txtHeight.Name = "txtHeight";
             txtHeight.Size = new Size(64, 24);
             txtHeight.TabIndex = 2;
+            txtHeight.Text = "5";
+            txtHeight.TextAlign = HorizontalAlignment.Right;
             // 
             // grpMazeSize
             // 
-            grpMazeSize.Controls.Add(lblHCells);
-            grpMazeSize.Controls.Add(lblWCells);
+            grpMazeSize.Controls.Add(lblPercentage);
+            grpMazeSize.Controls.Add(lblRemoveDeadends);
+            grpMazeSize.Controls.Add(txtRemoveDeadends);
+            grpMazeSize.Controls.Add(lblCellsHeight);
+            grpMazeSize.Controls.Add(lblCellsWidth);
             grpMazeSize.Controls.Add(txtWidth);
             grpMazeSize.Controls.Add(lblHeight);
             grpMazeSize.Controls.Add(txtHeight);
@@ -80,28 +90,55 @@
             grpMazeSize.TabStop = false;
             grpMazeSize.Text = "Enter Maze Size:";
             // 
-            // lblHCells
+            // lblPercentage
             // 
-            lblHCells.AutoSize = true;
-            lblHCells.Location = new Point(126, 73);
-            lblHCells.Name = "lblHCells";
-            lblHCells.Size = new Size(38, 18);
-            lblHCells.TabIndex = 6;
-            lblHCells.Text = "cells";
+            lblPercentage.AutoSize = true;
+            lblPercentage.Location = new Point(213, 95);
+            lblPercentage.Name = "lblPercentage";
+            lblPercentage.Size = new Size(21, 18);
+            lblPercentage.TabIndex = 5;
+            lblPercentage.Text = "%";
             // 
-            // lblWCells
+            // lblRemoveDeadends
             // 
-            lblWCells.AutoSize = true;
-            lblWCells.Location = new Point(126, 37);
-            lblWCells.Name = "lblWCells";
-            lblWCells.Size = new Size(38, 18);
-            lblWCells.TabIndex = 5;
-            lblWCells.Text = "cells";
+            lblRemoveDeadends.AutoSize = true;
+            lblRemoveDeadends.Location = new Point(6, 95);
+            lblRemoveDeadends.Name = "lblRemoveDeadends";
+            lblRemoveDeadends.Size = new Size(139, 18);
+            lblRemoveDeadends.TabIndex = 5;
+            lblRemoveDeadends.Text = "Remove Deadends:";
+            // 
+            // txtRemoveDeadends
+            // 
+            txtRemoveDeadends.Location = new Point(147, 92);
+            txtRemoveDeadends.Name = "txtRemoveDeadends";
+            txtRemoveDeadends.Size = new Size(64, 24);
+            txtRemoveDeadends.TabIndex = 5;
+            txtRemoveDeadends.Text = "20";
+            txtRemoveDeadends.TextAlign = HorizontalAlignment.Right;
+            // 
+            // lblCellsHeight
+            // 
+            lblCellsHeight.AutoSize = true;
+            lblCellsHeight.Location = new Point(129, 65);
+            lblCellsHeight.Name = "lblCellsHeight";
+            lblCellsHeight.Size = new Size(38, 18);
+            lblCellsHeight.TabIndex = 6;
+            lblCellsHeight.Text = "cells";
+            // 
+            // lblCellsWidth
+            // 
+            lblCellsWidth.AutoSize = true;
+            lblCellsWidth.Location = new Point(129, 37);
+            lblCellsWidth.Name = "lblCellsWidth";
+            lblCellsWidth.Size = new Size(38, 18);
+            lblCellsWidth.TabIndex = 5;
+            lblCellsWidth.Text = "cells";
             // 
             // lblHeight
             // 
             lblHeight.AutoSize = true;
-            lblHeight.Location = new Point(6, 73);
+            lblHeight.Location = new Point(6, 65);
             lblHeight.Name = "lblHeight";
             lblHeight.Size = new Size(54, 18);
             lblHeight.TabIndex = 4;
@@ -154,7 +191,10 @@
         private Label lblWidth;
         private Label lblHeight;
         private Label lblTitle;
-        private Label lblHCells;
-        private Label lblWCells;
+        private Label lblCellsHeight;
+        private Label lblCellsWidth;
+        private Label lblRemoveDeadends;
+        private TextBox txtRemoveDeadends;
+        private Label lblPercentage;
     }
 }
