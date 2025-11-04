@@ -60,5 +60,6 @@
         #endregion
 
         private Button btnBack;
+        private PictureBox pictureBox1;
     }
 }

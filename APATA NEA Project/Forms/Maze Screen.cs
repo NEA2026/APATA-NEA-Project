@@ -7,6 +7,7 @@ namespace APATA_NEA_Project.Forms
         private readonly int rows;
         private readonly int columns;
         private readonly int percentage;
+        private readonly Graph maze;
 
         public MazeScreen(int rows, int columns, int percentage)
         {
@@ -14,13 +15,13 @@ namespace APATA_NEA_Project.Forms
             this.rows = rows;
             this.columns = columns;
             this.percentage = percentage;
+            maze = new(rows, columns);
         }
 
         private void Maze_Paint(object sender, PaintEventArgs e)
         {
-            Graph maze = new(rows, columns);
             maze.AddCells();
-            maze.AddWalls(e.Graphics);
+            maze.DrawCells(e.Graphics);
             maze.GenerateMaze(e.Graphics);
 
             if (percentage == 100)

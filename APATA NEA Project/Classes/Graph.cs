@@ -42,33 +42,12 @@
             }
         }
 
-        public void AddWalls(Graphics graphics)
+        public void DrawCells(Graphics graphics)
         {
             using Pen wall = new(Color.Black, 1.5f);
             foreach (Node cell in Cells)
             {
-                int x = cell.X;
-                int y = cell.Y;
-
-                if (cell.TopWall)
-                {
-                    graphics.DrawLine(wall, x, y, x + CellWidth, y);
-                }
-
-                if (cell.RightWall)
-                {
-                    graphics.DrawLine(wall, x + CellWidth, y, x + CellWidth, y + CellWidth);
-                }
-
-                if (cell.BottomWall)
-                {
-                    graphics.DrawLine(wall, x + CellWidth, y + CellWidth, x, y + CellWidth);
-                }
-
-                if (cell.LeftWall)
-                {
-                    graphics.DrawLine(wall, x, y + CellWidth, x, y);
-                }
+                graphics.DrawRectangle(wall, cell.X, cell.Y, CellWidth, CellWidth);
             }
         }
 

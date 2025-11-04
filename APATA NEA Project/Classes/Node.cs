@@ -1,6 +1,4 @@
-﻿using System.Drawing.Text;
-
-namespace APATA_NEA_Project.Classes
+﻿namespace APATA_NEA_Project.Classes
 {
     internal class Node(Graph maze, int Row, int Column)
     {
