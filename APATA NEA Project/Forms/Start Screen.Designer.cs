@@ -92,7 +92,6 @@
             // 
             // lblPercentage
             // 
-            lblPercentage.AutoSize = true;
             lblPercentage.Location = new Point(213, 95);
             lblPercentage.Name = "lblPercentage";
             lblPercentage.Size = new Size(21, 18);
@@ -101,7 +100,6 @@
             // 
             // lblRemoveDeadends
             // 
-            lblRemoveDeadends.AutoSize = true;
             lblRemoveDeadends.Location = new Point(6, 95);
             lblRemoveDeadends.Name = "lblRemoveDeadends";
             lblRemoveDeadends.Size = new Size(139, 18);
@@ -119,7 +117,6 @@
             // 
             // lblCellsHeight
             // 
-            lblCellsHeight.AutoSize = true;
             lblCellsHeight.Location = new Point(129, 65);
             lblCellsHeight.Name = "lblCellsHeight";
             lblCellsHeight.Size = new Size(38, 18);
@@ -128,7 +125,6 @@
             // 
             // lblCellsWidth
             // 
-            lblCellsWidth.AutoSize = true;
             lblCellsWidth.Location = new Point(129, 37);
             lblCellsWidth.Name = "lblCellsWidth";
             lblCellsWidth.Size = new Size(38, 18);
@@ -137,7 +133,6 @@
             // 
             // lblHeight
             // 
-            lblHeight.AutoSize = true;
             lblHeight.Location = new Point(6, 65);
             lblHeight.Name = "lblHeight";
             lblHeight.Size = new Size(54, 18);
@@ -146,7 +141,6 @@
             // 
             // lblWidth
             // 
-            lblWidth.AutoSize = true;
             lblWidth.Location = new Point(6, 37);
             lblWidth.Name = "lblWidth";
             lblWidth.Size = new Size(50, 18);
@@ -155,7 +149,6 @@
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Calibri", 31.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTitle.Location = new Point(175, 16);
             lblTitle.Name = "lblTitle";
@@ -173,13 +166,13 @@
             Controls.Add(grpMazeSize);
             Controls.Add(btnGenerateMaze);
             FormBorderStyle = FormBorderStyle.Fixed3D;
+            MaximizeBox = false;
             Name = "StartScreen";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "APATA";
             grpMazeSize.ResumeLayout(false);
             grpMazeSize.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion

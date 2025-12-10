@@ -33,6 +33,7 @@
             // 
             // btnBack
             // 
+            btnBack.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnBack.Location = new Point(25, 680);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(128, 29);

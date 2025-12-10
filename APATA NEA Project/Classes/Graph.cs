@@ -1,4 +1,7 @@
-﻿namespace APATA_NEA_Project.Classes
+﻿using System.Diagnostics.Eventing.Reader;
+using static System.Net.Mime.MediaTypeNames;
+
+namespace APATA_NEA_Project.Classes
 {
     internal class Graph
     {
@@ -6,20 +9,24 @@
         private readonly int columns;
         public readonly int CellWidth;
         public readonly Node[,] Cells;
+        public readonly int Delay;
+        public bool FinishedDrawing = false;
 
-        public Graph(int rows, int columns)
+        public Graph(int rows, int columns, double scaling)
         {
             this.rows = rows;
             this.columns = columns;
 
-            if (rows > columns)
+            double guiSize = 520 * scaling;
+
+            if (rows >= columns)
             {
-                CellWidth = 650 / rows;
+                CellWidth = (int)guiSize / rows;
             }
 
             else
             {
-                CellWidth = 650 / columns;
+                CellWidth = (int)guiSize / columns;
             }
 
             Cells = new Node[rows, columns];
@@ -59,11 +66,17 @@
             Stack<Node> cellStack = new();
             cellStack.Push(current);
 
-            CreateStartAndEnd(current, graphics);
+            CreateStartAndExit(current, graphics);
 
             while (cellStack.Count > 0)
             {
+                using Brush currentCell = new SolidBrush(Color.Orange);
+                using Brush visitedCell = new SolidBrush(Color.LightGreen);
+
                 current = cellStack.Pop();
+
+                graphics.FillRectangle(currentCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
+                //Thread.Sleep(200);
 
                 List<Node> unvisitedNeighbours = current.FindUnvisitedNeighbours(Cells, rows, columns);
 
@@ -79,11 +92,19 @@
 
                     next.Visited = true;
                     cellStack.Push(next);
+
+                    graphics.FillRectangle(visitedCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
+                    graphics.FillRectangle(currentCell, next.X + 1, next.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
+                }
+
+                else if (unvisitedNeighbours.Count == 0)
+                {
+                    graphics.FillRectangle(visitedCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
                 }
             }
         }
 
-        private void CreateStartAndEnd(Node current, Graphics graphics)
+        private void CreateStartAndExit(Node current, Graphics graphics)
         {
             using Pen removeWall = new(Color.White, 1.5f);
             current.TopWall = false;
@@ -98,10 +119,10 @@
         {
             List<Node> deadEnds = FindDeadEnds();
             Node[] deadEndsArray = deadEnds.ToArray();
-            RemoveDeadEndWalls(deadEndsArray, graphics);
+            RemoveWallsFromDeadEnds(deadEndsArray, graphics);
         }
 
-        public void RemoveDeadEnds(Graphics graphics, double percentage)
+        public void RemoveDeadEnds(double percentage, Graphics graphics)
         {
             List<Node> deadEnds = FindDeadEnds();
             double multiplier = percentage / 100;
@@ -117,7 +138,7 @@
                 deadEnds.Remove(deadEnds[randomDeadEnd]);
             }
             
-            RemoveDeadEndWalls(randomDeadEnds, graphics);
+            RemoveWallsFromDeadEnds(randomDeadEnds, graphics);
         }
 
         private List<Node> FindDeadEnds()
@@ -143,9 +164,9 @@
             return deadEnds;
         }
 
-        private void RemoveDeadEndWalls(Node[] deadEnds, Graphics graphics)
+        private void RemoveWallsFromDeadEnds(Node[] deadEnds, Graphics graphics)
         {
-            using Pen path = new(Color.White, 1.5f);
+            using Pen path = new(Color.LightGreen, 1.5f);
 
             foreach (Node cell in deadEnds)
             {
