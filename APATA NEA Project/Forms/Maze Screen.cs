@@ -4,12 +4,11 @@ namespace APATA_NEA_Project.Forms
 {
     public partial class MazeScreen : Form
     {
-        //private readonly int rows;
-        //private readonly int columns;
-        private readonly int percentage;
         private readonly Graph maze;
-
-        public MazeScreen(int rows, int columns, int percentage)
+        private readonly int percentage;
+        private readonly int animationDelay;
+       
+        public MazeScreen(int rows, int columns, int percentage, int animationDelay)
         {
             InitializeComponent();
             const int guiWidth = 850;
@@ -22,9 +21,8 @@ namespace APATA_NEA_Project.Forms
             this.Width = (int)(guiWidth * scaling);
             this.Height = (int)(guiHeight * scaling);
 
-            //this.rows = rows;
-            //this.columns = columns;
             this.percentage = percentage;
+            this.animationDelay = animationDelay;
 
             maze = new(rows, columns, scaling);
         }
@@ -33,7 +31,7 @@ namespace APATA_NEA_Project.Forms
         {
             maze.AddCells();
             maze.DrawCells(e.Graphics);
-            maze.GenerateMaze(e.Graphics);
+            maze.GenerateMaze(animationDelay, e.Graphics);
 
             if (percentage == 100)
             {

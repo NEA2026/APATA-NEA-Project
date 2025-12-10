@@ -49,7 +49,9 @@
                 return;
             }
 
-            MazeScreen mazeScreen = new(rows, columns, percentage);
+            int animationDelay = 50;
+
+            MazeScreen mazeScreen = new(rows, columns, percentage, animationDelay);
             Hide();
             mazeScreen.Show();
         }

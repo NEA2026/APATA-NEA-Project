@@ -95,12 +95,7 @@
             
             int CellWidth = maze.CellWidth;
             using Pen path = new(Color.LightGreen, 1.5f);
-            /*
-            if (!maze.FinishedDrawing)
-            {
-                Thread.Sleep(maze.Delay);
-            }
-            */
+       
             if (!TopWall && !next.BottomWall)
             {
                 graphics.DrawLine(path, X + 1, Y, X + CellWidth - 1, Y);

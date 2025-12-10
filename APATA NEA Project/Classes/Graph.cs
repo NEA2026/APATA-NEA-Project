@@ -9,8 +9,6 @@ namespace APATA_NEA_Project.Classes
         private readonly int columns;
         public readonly int CellWidth;
         public readonly Node[,] Cells;
-        public readonly int Delay;
-        public bool FinishedDrawing = false;
 
         public Graph(int rows, int columns, double scaling)
         {
@@ -58,7 +56,7 @@ namespace APATA_NEA_Project.Classes
             }
         }
 
-        public void GenerateMaze(Graphics graphics)
+        public void GenerateMaze(int animationDelay, Graphics graphics)
         {
             Node current = Cells[0, 0];
             current.Visited = true;
@@ -76,7 +74,7 @@ namespace APATA_NEA_Project.Classes
                 current = cellStack.Pop();
 
                 graphics.FillRectangle(currentCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
-                //Thread.Sleep(200);
+                Thread.Sleep(animationDelay);
 
                 List<Node> unvisitedNeighbours = current.FindUnvisitedNeighbours(Cells, rows, columns);
 
