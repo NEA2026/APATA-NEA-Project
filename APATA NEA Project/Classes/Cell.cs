@@ -1,8 +1,8 @@
 ﻿namespace APATA_NEA_Project.Classes
 {
-    internal class Node(Graph maze, int Row, int Column)
+    internal class Cell(Maze maze, int Row, int Column)
     {
-        private readonly Graph maze = maze;
+        private readonly Maze maze = maze;
         public readonly int Row = Row;
         public readonly int Column = Column;
 
@@ -16,13 +16,13 @@
 
         public bool Visited = false;
 
-        public List<Node> FindUnvisitedNeighbours(Node[,] Cells, int rows, int columns)
+        public List<Cell> FindUnvisitedNeighbours()
         {
-            List<Node> unvisitedNeighbours = new();
+            List<Cell> unvisitedNeighbours = new();
 
             if (Row != 0)
             {
-                Node top = Cells[Row - 1, Column];
+                Cell top = maze.Cells[Row - 1, Column];
 
                 if (!top.Visited)
                 {
@@ -30,9 +30,9 @@
                 }
             }
 
-            if (Column != columns - 1)
+            if (Column != maze.Columns - 1)
             {
-                Node right = Cells[Row, Column + 1];
+                Cell right = maze.Cells[Row, Column + 1];
 
                 if (!right.Visited)
                 {
@@ -40,9 +40,9 @@
                 }
             }
 
-            if (Row != rows - 1)
+            if (Row != maze.Rows - 1)
             {
-                Node bottom = Cells[Row + 1, Column];
+                Cell bottom = maze.Cells[Row + 1, Column];
 
                 if (!bottom.Visited)
                 {
@@ -52,7 +52,7 @@
 
             if (Column != 0)
             {
-                Node left = Cells[Row, Column - 1];
+                Cell left = maze.Cells[Row, Column - 1];
 
                 if (!left.Visited)
                 {
@@ -63,7 +63,7 @@
             return unvisitedNeighbours;
         }
 
-        public void RemoveWalls(Node next, Graphics graphics)
+        public void RemoveWalls(Cell next, Graphics graphics)
         {
             int rowDifference = Row - next.Row;
 

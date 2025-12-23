@@ -1,19 +1,16 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace APATA_NEA_Project.Classes
+﻿namespace APATA_NEA_Project.Classes
 {
-    internal class Graph
+    internal class Maze
     {
-        private readonly int rows;
-        private readonly int columns;
+        public readonly int Rows;
+        public readonly int Columns;
         public readonly int CellWidth;
-        public readonly Node[,] Cells;
+        public readonly Cell[,] Cells;
 
-        public Graph(int rows, int columns, double scaling)
+        public Maze(int rows, int columns, double scaling)
         {
-            this.rows = rows;
-            this.columns = columns;
+            this.Rows = rows;
+            this.Columns = columns;
 
             double guiSize = 520 * scaling;
 
@@ -27,16 +24,16 @@ namespace APATA_NEA_Project.Classes
                 CellWidth = (int)guiSize / columns;
             }
 
-            Cells = new Node[rows, columns];
+            Cells = new Cell[rows, columns];
         }
 
         public void AddCells()
         {
-            for (int row = 0; row < rows; row++)
+            for (int row = 0; row < Rows; row++)
             {
-                for (int column = 0; column < columns; column++)
+                for (int column = 0; column < Columns; column++)
                 {
-                    Node cell = new(this, row, column);
+                    Cell cell = new(this, row, column);
                     Cells[row, column] = cell;
 
                     int x = 25 + column * CellWidth;
@@ -50,7 +47,7 @@ namespace APATA_NEA_Project.Classes
         public void DrawCells(Graphics graphics)
         {
             using Pen wall = new(Color.Black, 1.5f);
-            foreach (Node cell in Cells)
+            foreach (Cell cell in Cells)
             {
                 graphics.DrawRectangle(wall, cell.X, cell.Y, CellWidth, CellWidth);
             }
@@ -58,15 +55,15 @@ namespace APATA_NEA_Project.Classes
 
         public void GenerateMaze(int animationDelay, Graphics graphics)
         {
-            Node current = Cells[0, 0];
+            Cell current = Cells[0, 0];
             current.Visited = true;
 
-            Stack<Node> cellStack = new();
+            Stack<Cell> cellStack = new();
             cellStack.Push(current);
 
             CreateStartAndExit(current, graphics);
 
-            while (cellStack.Count > 0)
+            while (cellStack.Count != 0)
             {
                 using Brush currentCell = new SolidBrush(Color.Orange);
                 using Brush visitedCell = new SolidBrush(Color.LightGreen);
@@ -76,7 +73,7 @@ namespace APATA_NEA_Project.Classes
                 graphics.FillRectangle(currentCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
                 Thread.Sleep(animationDelay);
 
-                List<Node> unvisitedNeighbours = current.FindUnvisitedNeighbours(Cells, rows, columns);
+                List<Cell> unvisitedNeighbours = current.FindUnvisitedNeighbours();
 
                 if (unvisitedNeighbours.Count > 0)
                 {
@@ -84,7 +81,7 @@ namespace APATA_NEA_Project.Classes
 
                     Random random = new();
                     int randomUnvisitedNeighbour = random.Next(0, unvisitedNeighbours.Count);
-                    Node next = unvisitedNeighbours[randomUnvisitedNeighbour];
+                    Cell next = unvisitedNeighbours[randomUnvisitedNeighbour];
 
                     current.RemoveWalls(next, graphics);
 
@@ -102,31 +99,31 @@ namespace APATA_NEA_Project.Classes
             }
         }
 
-        private void CreateStartAndExit(Node current, Graphics graphics)
+        private void CreateStartAndExit(Cell current, Graphics graphics)
         {
             using Pen removeWall = new(Color.White, 1.5f);
             current.TopWall = false;
             graphics.DrawLine(removeWall, current.X + 1, current.Y, current.X + CellWidth - 1, current.Y);
 
-            Node end = Cells[rows - 1, columns - 1];
+            Cell end = Cells[Rows - 1, Columns - 1];
             end.BottomWall = false;
             graphics.DrawLine(removeWall, end.X + CellWidth - 1, end.Y + CellWidth, end.X + 1, end.Y + CellWidth);
         }
 
         public void RemoveDeadEnds(Graphics graphics)
         {
-            List<Node> deadEnds = FindDeadEnds();
-            Node[] deadEndsArray = deadEnds.ToArray();
+            List<Cell> deadEnds = FindDeadEnds();
+            Cell[] deadEndsArray = deadEnds.ToArray();
             RemoveWallsFromDeadEnds(deadEndsArray, graphics);
         }
 
         public void RemoveDeadEnds(double percentage, Graphics graphics)
         {
-            List<Node> deadEnds = FindDeadEnds();
+            List<Cell> deadEnds = FindDeadEnds();
             double multiplier = percentage / 100;
             int deadEndsToRemove = (int)Math.Round(multiplier * deadEnds.Count, MidpointRounding.AwayFromZero);
 
-            Node[] randomDeadEnds = new Node[deadEndsToRemove];
+            Cell[] randomDeadEnds = new Cell[deadEndsToRemove];
             Random random = new();
 
             for (int i = 0; i < deadEndsToRemove; i++)
@@ -139,11 +136,11 @@ namespace APATA_NEA_Project.Classes
             RemoveWallsFromDeadEnds(randomDeadEnds, graphics);
         }
 
-        private List<Node> FindDeadEnds()
+        private List<Cell> FindDeadEnds()
         {
-            List<Node> deadEnds = new();
+            List<Cell> deadEnds = new();
             
-            foreach (Node cell in Cells)
+            foreach (Cell cell in Cells)
             {
                 int[] walls =
                 {
@@ -162,11 +159,11 @@ namespace APATA_NEA_Project.Classes
             return deadEnds;
         }
 
-        private void RemoveWallsFromDeadEnds(Node[] deadEnds, Graphics graphics)
+        private void RemoveWallsFromDeadEnds(Cell[] deadEnds, Graphics graphics)
         {
             using Pen path = new(Color.LightGreen, 1.5f);
 
-            foreach (Node cell in deadEnds)
+            foreach (Cell cell in deadEnds)
             {
                 int x = cell.X;
                 int y = cell.Y;
@@ -189,7 +186,7 @@ namespace APATA_NEA_Project.Classes
                             break;
 
                         case 1:
-                            if (cell.RightWall && cell.Column != columns - 1)
+                            if (cell.RightWall && cell.Column != Columns - 1)
                             {
                                 cell.RightWall = false;
                                 removed = true;
@@ -198,7 +195,7 @@ namespace APATA_NEA_Project.Classes
                             break;
 
                         case 2:
-                            if (cell.BottomWall && cell.Row != rows - 1)
+                            if (cell.BottomWall && cell.Row != Rows - 1)
                             {
                                 cell.BottomWall = false;
                                 removed = true;

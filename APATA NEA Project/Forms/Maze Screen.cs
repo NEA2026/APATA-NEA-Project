@@ -4,7 +4,7 @@ namespace APATA_NEA_Project.Forms
 {
     public partial class MazeScreen : Form
     {
-        private readonly Graph maze;
+        private readonly Maze maze;
         private readonly int percentage;
         private readonly int animationDelay;
        
@@ -42,6 +42,9 @@ namespace APATA_NEA_Project.Forms
             {
                 maze.RemoveDeadEnds(percentage, e.Graphics);
             }
+
+            Dijkstras_Algorithm dijkstra = new(maze);
+            dijkstra.FindShortestPath(e.Graphics);
         }
 
         private void btnBack_Click(object sender, EventArgs e)

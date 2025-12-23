@@ -49,7 +49,7 @@
                 return;
             }
 
-            int animationDelay = 50;
+            int animationDelay = 0;
 
             MazeScreen mazeScreen = new(rows, columns, percentage, animationDelay);
             Hide();
