@@ -1,10 +1,68 @@
-﻿namespace APATA_NEA_Project.Classes
+﻿namespace APATA_NEA_Project.Classes;
+
+internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
 {
-    internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
+    public override void FindShortestPath(Graphics graphics)
     {
-        public override void FindShortestPath(Graphics graphics)
+        IndexedPriorityQueue openSet = new();
+
+        Dictionary<Cell, Cell> cameFrom = new();
+        Dictionary<Cell, int> gScore = new();
+        Dictionary<Cell, int> fScore = new();
+
+        Cell start = maze.Cells[0, 0];
+        Cell goal = maze.Cells[maze.Columns - 1, maze.Rows - 1];
+
+        start.Visited = false;
+        gScore[start] = 0;
+        fScore[start] = Heuristic(start, goal);
+        openSet.Insert(start, 0);
+
+        foreach (Cell cell in maze.Cells)
         {
-            IndexedPriorityQueue openSet = new();
+            if (cell != start)
+            {
+                cell.Visited = false;
+                gScore[cell] = int.MaxValue;
+                fScore[cell] = int.MaxValue;
+            }
         }
+
+        while (openSet.Count != 0)
+        {
+            Cell current = openSet.ExtractMin();
+
+            if (current == goal)
+            {
+                ReconstructPath(graphics, cameFrom, current);
+            }
+
+            List<Cell> neighbours = FindNeighbours(current);
+
+            foreach (Cell neighbour in neighbours)
+            {
+                int tentativeGScore = gScore[current] + 1;
+
+                if (tentativeGScore < gScore[neighbour])
+                {
+                    cameFrom[neighbour] = current;
+                    gScore[neighbour] = tentativeGScore;
+                    fScore[neighbour] = tentativeGScore + Heuristic(neighbour, goal);
+
+                    if (!openSet.Contains(neighbour))
+                    {
+                        openSet.Insert(neighbour, gScore[neighbour]);
+                    }
+                }
+
+            }
+        }
+    }
+
+    public int Heuristic(Cell current, Cell goal)
+    {
+        int manhattanDistance = Math.Abs(current.Column - goal.Column) + Math.Abs(current.Row - goal.Row);
+
+        return manhattanDistance;
     }
 }
