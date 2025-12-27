@@ -31,7 +31,7 @@ public partial class MazeScreen : Form
     {
         maze.AddCells();
         maze.DrawCells(e.Graphics);
-        maze.GenerateMaze(animationDelay, e.Graphics);
+        maze.GenerateMaze(e.Graphics, animationDelay);
 
         if (percentage == 100)
         {
@@ -40,11 +40,14 @@ public partial class MazeScreen : Form
 
         else if (percentage > 0 && percentage < 100)
         {
-            maze.RemoveDeadEnds(percentage, e.Graphics);
+            maze.RemoveDeadEnds(e.Graphics, percentage);
         }
 
-        Dijkstras_Algorithm dijkstra = new(maze);
-        dijkstra.FindShortestPath(e.Graphics);
+        //Dijkstras_Algorithm dijkstra = new(maze);
+        //dijkstra.FindShortestPath(e.Graphics);
+
+        A_Star_Search_Algorithm aStar = new(maze);
+        aStar.FindShortestPath(e.Graphics);
     }
 
     private void btnBack_Click(object sender, EventArgs e)

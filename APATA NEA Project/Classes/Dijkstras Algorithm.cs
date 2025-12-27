@@ -4,13 +4,15 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
 {
     public override void FindShortestPath(Graphics graphics)
     {
-        IndexedPriorityQueue priorityQueue = new();
+        MinHeapPriorityQueue priorityQueue = new();
         List<Cell> visitedCells = new();
 
         Dictionary<Cell, Cell> previous = new();
         Dictionary<Cell, int> distance = new();
         
         Cell source = maze.Cells[0, 0];
+        Cell target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
+
         source.Visited = false;
         distance[source] = 0;
         priorityQueue.Insert(source, 0);
@@ -25,16 +27,15 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 priorityQueue.Insert(cell, int.MaxValue);
             }
         }
-        
+
         while (priorityQueue.Count != 0)
         {
-            using Brush currentCell = new SolidBrush(Color.Orange);
-
             Cell current = priorityQueue.ExtractMin();
             current.Visited = true;
             visitedCells.Add(current);
-            graphics.FillRectangle(currentCell, current.X + 1, current.Y + 1, (float)(maze.CellWidth - 1.5), (float)(maze.CellWidth - 1.5));
-            //Thread.Sleep(20);
+
+            current.PaintCurrentCell(graphics, currentCellColour);
+            //Thread.Sleep(5);
 
             List<Cell> neighbours = FindNeighbours(current);
 
@@ -47,11 +48,12 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                     previous[neighbour] = current;
                     distance[neighbour] = alternateDistance;
                     priorityQueue.DecreaseKey(neighbour, alternateDistance);
-                }  
+                }
             }
+
+            current.PaintVisitedCell(graphics, visitedCellColour);
         }
 
-        Cell target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
         ReconstructPath(graphics, previous, target);
     }
 }

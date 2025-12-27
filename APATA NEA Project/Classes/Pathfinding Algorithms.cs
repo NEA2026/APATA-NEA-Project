@@ -3,6 +3,9 @@
 internal abstract class Pathfinding_Algorithms(Maze maze)
 {
     protected readonly Maze maze = maze;
+    protected readonly Color currentCellColour = Color.Orange;
+    protected readonly Color visitedCellColour = Color.PaleVioletRed;
+    private readonly Color shortestPathColour = Color.RebeccaPurple;
 
     public abstract void FindShortestPath(Graphics graphics);
 
@@ -49,8 +52,12 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
 
         foreach (Cell cell in shortestPath)
         {
-            using Brush path = new SolidBrush(Color.Blue);
-            graphics.FillRectangle(path, cell.X + 1, cell.Y + 1, (float)(maze.CellWidth - 1.5), (float)(maze.CellWidth - 1.5));
+            PaintShortestPath(graphics, cell);
         }
+    }
+
+    private void PaintShortestPath(Graphics graphics, Cell cell)
+    {
+        cell.PaintVisitedCell(graphics, shortestPathColour);
     }
 }

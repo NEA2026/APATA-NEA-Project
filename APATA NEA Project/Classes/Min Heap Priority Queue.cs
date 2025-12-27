@@ -1,6 +1,6 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal class IndexedPriorityQueue
+internal class MinHeapPriorityQueue
 {
     internal class HeapNode(Cell cell, int distance)
     {
@@ -16,10 +16,7 @@ internal class IndexedPriorityQueue
 
     public bool Contains(Cell cell)
     {
-        int index = indexMap[cell];
-        HeapNode heapNode = minHeap[index];
-
-        return minHeap.Contains(heapNode);
+        return indexMap.ContainsKey(cell);
     }
 
     public void Insert(Cell cell, int distance)

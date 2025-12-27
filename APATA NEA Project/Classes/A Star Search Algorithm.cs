@@ -1,10 +1,13 @@
-﻿namespace APATA_NEA_Project.Classes;
+﻿using System.Collections.Generic;
+
+namespace APATA_NEA_Project.Classes;
 
 internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
 {
     public override void FindShortestPath(Graphics graphics)
     {
-        IndexedPriorityQueue openSet = new();
+        MinHeapPriorityQueue openSet = new();
+        List<Cell> visitedCells = new();
 
         Dictionary<Cell, Cell> cameFrom = new();
         Dictionary<Cell, int> gScore = new();
@@ -30,11 +33,19 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
 
         while (openSet.Count != 0)
         {
+            using Brush currentCell = new SolidBrush(Color.DarkRed);
+
             Cell current = openSet.ExtractMin();
+            current.Visited = true;
+            visitedCells.Add(current);
+
+            current.PaintCurrentCell(graphics, currentCellColour);
+            //Thread.Sleep(5);
 
             if (current == goal)
             {
                 ReconstructPath(graphics, cameFrom, current);
+                break;
             }
 
             List<Cell> neighbours = FindNeighbours(current);
@@ -51,15 +62,21 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
 
                     if (!openSet.Contains(neighbour))
                     {
-                        openSet.Insert(neighbour, gScore[neighbour]);
+                        openSet.Insert(neighbour, fScore[neighbour]);
+                    }
+
+                    else
+                    {
+                        openSet.DecreaseKey(neighbour, fScore[neighbour]);
                     }
                 }
-
             }
+
+            current.PaintVisitedCell(graphics, visitedCellColour);
         }
     }
 
-    public int Heuristic(Cell current, Cell goal)
+    private int Heuristic(Cell current, Cell goal)
     {
         int manhattanDistance = Math.Abs(current.Column - goal.Column) + Math.Abs(current.Row - goal.Row);
 

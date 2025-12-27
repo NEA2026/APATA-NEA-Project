@@ -6,6 +6,8 @@ internal class Maze
     public readonly int Columns;
     public readonly int CellWidth;
     public readonly Cell[,] Cells;
+    private readonly Color currentCellColour = Color.Orange;
+    private readonly Color visitedCellColour = Color.LightGreen;
 
     public Maze(int rows, int columns, double scaling)
     {
@@ -47,13 +49,14 @@ internal class Maze
     public void DrawCells(Graphics graphics)
     {
         using Pen wall = new(Color.Black, 1.5f);
+
         foreach (Cell cell in Cells)
         {
             graphics.DrawRectangle(wall, cell.X, cell.Y, CellWidth, CellWidth);
         }
     }
 
-    public void GenerateMaze(int animationDelay, Graphics graphics)
+    public void GenerateMaze(Graphics graphics, int animationDelay)
     {
         Cell current = Cells[0, 0];
         current.Visited = true;
@@ -61,19 +64,16 @@ internal class Maze
         Stack<Cell> cellStack = new();
         cellStack.Push(current);
 
-        CreateStartAndExit(current, graphics);
+        CreateStartAndExit(graphics, current);
 
         while (cellStack.Count != 0)
         {
-            using Brush currentCell = new SolidBrush(Color.Orange);
-            using Brush visitedCell = new SolidBrush(Color.LightGreen);
-
             current = cellStack.Pop();
 
-            graphics.FillRectangle(currentCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
+            current.PaintCurrentCell(graphics, currentCellColour);
             Thread.Sleep(animationDelay);
 
-            List<Cell> unvisitedNeighbours = current.FindUnvisitedNeighbours();
+            List<Cell> unvisitedNeighbours = FindUnvisitedNeighbours(current);
 
             if (unvisitedNeighbours.Count > 0)
             {
@@ -83,25 +83,20 @@ internal class Maze
                 int randomUnvisitedNeighbour = random.Next(0, unvisitedNeighbours.Count);
                 Cell next = unvisitedNeighbours[randomUnvisitedNeighbour];
 
-                current.RemoveWalls(next, graphics);
+                RemoveWalls(current, next);
 
                 next.Visited = true;
                 cellStack.Push(next);
-
-                graphics.FillRectangle(visitedCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
-                graphics.FillRectangle(currentCell, next.X + 1, next.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
             }
 
-            else if (unvisitedNeighbours.Count == 0)
-            {
-                graphics.FillRectangle(visitedCell, current.X + 1, current.Y + 1, (float)(CellWidth - 1.5), (float)(CellWidth - 1.5));
-            }
+            current.PaintVisitedCell(graphics, visitedCellColour);
         }
     }
 
-    private void CreateStartAndExit(Cell current, Graphics graphics)
+    private void CreateStartAndExit(Graphics graphics, Cell current)
     {
         using Pen removeWall = new(Color.White, 1.5f);
+
         current.TopWall = false;
         graphics.DrawLine(removeWall, current.X + 1, current.Y, current.X + CellWidth - 1, current.Y);
 
@@ -110,14 +105,92 @@ internal class Maze
         graphics.DrawLine(removeWall, end.X + CellWidth - 1, end.Y + CellWidth, end.X + 1, end.Y + CellWidth);
     }
 
+    private List<Cell> FindUnvisitedNeighbours(Cell current)
+    {
+        List<Cell> unvisitedNeighbours = new();
+
+        if (current.Row != 0)
+        {
+            Cell top = Cells[current.Row - 1, current.Column];
+
+            if (!top.Visited)
+            {
+                unvisitedNeighbours.Add(top);
+            }
+        }
+
+        if (current.Column != Columns - 1)
+        {
+            Cell right = Cells[current.Row, current.Column + 1];
+
+            if (!right.Visited)
+            {
+                unvisitedNeighbours.Add(right);
+            }
+        }
+
+        if (current.Row != Rows - 1)
+        {
+            Cell bottom = Cells[current.Row + 1, current.Column];
+
+            if (!bottom.Visited)
+            {
+                unvisitedNeighbours.Add(bottom);
+            }
+        }
+
+        if (current.Column != 0)
+        {
+            Cell left = Cells[current.Row, current.Column - 1];
+
+            if (!left.Visited)
+            {
+                unvisitedNeighbours.Add(left);
+            }
+        }
+
+        return unvisitedNeighbours;
+    }
+
+    private void RemoveWalls(Cell current, Cell next)
+    {
+        int rowDifference = current.Row - next.Row;
+
+        if (rowDifference == 1)
+        {
+            current.TopWall = false;
+            next.BottomWall = false;
+        }
+
+        else if (rowDifference == -1)
+        {
+            current.BottomWall = false;
+            next.TopWall = false;
+        }
+
+        int columnDifference = current.Column - next.Column;
+
+        if (columnDifference == 1)
+        {
+            current.LeftWall = false;
+            next.RightWall = false;
+        }
+
+        else if (columnDifference == -1)
+        {
+            current.RightWall = false;
+            next.LeftWall = false;
+        }
+    }
+
     public void RemoveDeadEnds(Graphics graphics)
     {
         List<Cell> deadEnds = FindDeadEnds();
         Cell[] deadEndsArray = deadEnds.ToArray();
-        RemoveWallsFromDeadEnds(deadEndsArray, graphics);
+        RemoveWallsFromDeadEnds(graphics, deadEndsArray);
     }
 
-    public void RemoveDeadEnds(double percentage, Graphics graphics)
+    public void RemoveDeadEnds(Graphics graphics, double percentage)
     {
         List<Cell> deadEnds = FindDeadEnds();
         double multiplier = percentage / 100;
@@ -133,7 +206,7 @@ internal class Maze
             deadEnds.Remove(deadEnds[randomDeadEnd]);
         }
         
-        RemoveWallsFromDeadEnds(randomDeadEnds, graphics);
+        RemoveWallsFromDeadEnds(graphics, randomDeadEnds);
     }
 
     private List<Cell> FindDeadEnds()
@@ -159,9 +232,9 @@ internal class Maze
         return deadEnds;
     }
 
-    private void RemoveWallsFromDeadEnds(Cell[] deadEnds, Graphics graphics)
+    private void RemoveWallsFromDeadEnds(Graphics graphics, Cell[] deadEnds)
     {
-        using Pen path = new(Color.LightGreen, 1.5f);
+        using Pen path = new(visitedCellColour, 1.5f);
 
         foreach (Cell cell in deadEnds)
         {
