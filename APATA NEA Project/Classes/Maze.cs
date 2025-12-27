@@ -6,6 +6,7 @@ internal class Maze
     public readonly int Columns;
     public readonly int CellWidth;
     public readonly Cell[,] Cells;
+
     private readonly Color currentCellColour = Color.Orange;
     private readonly Color visitedCellColour = Color.LightGreen;
 

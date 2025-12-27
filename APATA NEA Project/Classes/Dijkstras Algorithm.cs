@@ -2,31 +2,18 @@
 
 internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
 {
+    private MinHeapPriorityQueue priorityQueue = new();
+    private List<Cell> visitedCells = new();
+
+    private Dictionary<Cell, Cell> previous = new();
+    private Dictionary<Cell, int> distance = new();
+
+    private readonly Cell source = maze.Cells[0, 0];
+    private readonly Cell target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
+
     public override void FindShortestPath(Graphics graphics)
     {
-        MinHeapPriorityQueue priorityQueue = new();
-        List<Cell> visitedCells = new();
-
-        Dictionary<Cell, Cell> previous = new();
-        Dictionary<Cell, int> distance = new();
-        
-        Cell source = maze.Cells[0, 0];
-        Cell target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
-
-        source.Visited = false;
-        distance[source] = 0;
-        priorityQueue.Insert(source, 0);
-
-        foreach (Cell cell in maze.Cells)
-        {
-            if (cell != source)
-            {
-                cell.Visited = false;
-                previous[cell] = null!;
-                distance[cell] = int.MaxValue;
-                priorityQueue.Insert(cell, int.MaxValue);
-            }
-        }
+        Initialise();
 
         while (priorityQueue.Count != 0)
         {
@@ -55,5 +42,23 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
         }
 
         ReconstructPath(graphics, previous, target);
+    }
+
+    protected override void Initialise()
+    {
+        source.Visited = false;
+        distance[source] = 0;
+        priorityQueue.Insert(source, 0);
+
+        foreach (Cell cell in maze.Cells)
+        {
+            if (cell != source)
+            {
+                cell.Visited = false;
+                previous[cell] = null!;
+                distance[cell] = int.MaxValue;
+                priorityQueue.Insert(cell, int.MaxValue);
+            }
+        }
     }
 }

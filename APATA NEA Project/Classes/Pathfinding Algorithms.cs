@@ -1,13 +1,16 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal abstract class Pathfinding_Algorithms(Maze maze)
+internal abstract class Pathfinding_Algorithms(Maze mazeParam)
 {
-    protected readonly Maze maze = maze;
+    protected readonly Maze maze = mazeParam;
+
     protected readonly Color currentCellColour = Color.Orange;
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
     private readonly Color shortestPathColour = Color.RebeccaPurple;
 
     public abstract void FindShortestPath(Graphics graphics);
+
+    protected abstract void Initialise();
 
     protected List<Cell> FindNeighbours(Cell cell)
     {
