@@ -47,12 +47,12 @@ internal class Maze
 
         if (percentage == 100)
         {
-            await RemoveDeadEnds();
+            RemoveDeadEnds();
         }
 
         else
         {
-            await RemoveDeadEnds(percentage);
+            RemoveDeadEnds(percentage);
         }
     }
 
@@ -183,7 +183,7 @@ internal class Maze
         return unvisitedNeighbours;
     }
 
-    private void RemoveWalls(Cell current, Cell next)
+    private static void RemoveWalls(Cell current, Cell next)
     {
         int rowDifference = current.Row - next.Row;
 
@@ -214,14 +214,14 @@ internal class Maze
         }
     }
 
-    public async Task RemoveDeadEnds()
+    private void RemoveDeadEnds()
     {
         List<Cell> deadEnds = FindDeadEnds();
         Cell[] deadEndsArray = deadEnds.ToArray();
-        await RemoveWallsFromDeadEnds(deadEndsArray);
+        RemoveWallsFromDeadEnds(deadEndsArray);
     }
 
-    public async Task RemoveDeadEnds(double percentage)
+    private void RemoveDeadEnds(double percentage)
     {
         List<Cell> deadEnds = FindDeadEnds();
         double multiplier = percentage / 100;
@@ -237,7 +237,7 @@ internal class Maze
             deadEnds.Remove(deadEnds[randomDeadEnd]);
         }
         
-        await RemoveWallsFromDeadEnds(randomDeadEnds);
+        RemoveWallsFromDeadEnds(randomDeadEnds);
     }
 
     private List<Cell> FindDeadEnds()
@@ -263,10 +263,10 @@ internal class Maze
         return deadEnds;
     }
 
-    private async Task RemoveWallsFromDeadEnds(Cell[] deadEnds)
+    private void RemoveWallsFromDeadEnds(Cell[] deadEnds)
     {
         using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
-        using Pen path = new(visitedCellColour, 1.5f);
+        using Pen removeWall = new(visitedCellColour, 1.5f);
 
         foreach (Cell cell in deadEnds)
         {
@@ -286,10 +286,7 @@ internal class Maze
                         {
                             cell.TopWall = false;
                             removed = true;
-
-                            graphics.DrawLine(path, x + 1, y, x + CellWidth - 1, y);
-                            MazeScreen.Invalidate();
-                            await Task.Delay(generationDelay);
+                            graphics.DrawLine(removeWall, x + 1, y, x + CellWidth - 1, y);
                         }
                         break;
 
@@ -298,10 +295,7 @@ internal class Maze
                         {
                             cell.RightWall = false;
                             removed = true;
-
-                            graphics.DrawLine(path, x + CellWidth, y + 1, x + CellWidth, y + CellWidth - 1);
-                            MazeScreen.Invalidate();
-                            await Task.Delay(generationDelay);
+                            graphics.DrawLine(removeWall, x + CellWidth, y + 1, x + CellWidth, y + CellWidth - 1);
                         }
                         break;
 
@@ -310,10 +304,7 @@ internal class Maze
                         {
                             cell.BottomWall = false;
                             removed = true;
-
-                            graphics.DrawLine(path, x + CellWidth - 1, y + CellWidth, x + 1, y + CellWidth);
-                            MazeScreen.Invalidate();
-                            await Task.Delay(generationDelay);
+                            graphics.DrawLine(removeWall, x + CellWidth - 1, y + CellWidth, x + 1, y + CellWidth);
                         }
                         break;
 
@@ -322,10 +313,7 @@ internal class Maze
                         {
                             cell.LeftWall = false;
                             removed = true;
-
-                            graphics.DrawLine(path, x, y + CellWidth - 1, x, y + 1);
-                            MazeScreen.Invalidate();
-                            await Task.Delay(generationDelay);
+                            graphics.DrawLine(removeWall, x, y + CellWidth - 1, x, y + 1);
                         }
                         break;
                 }
