@@ -35,8 +35,8 @@ public partial class MazeScreen : Form
         //Dijkstras_Algorithm dijkstra = new(maze);
         //await dijkstra.FindShortestPath();
 
-        //A_Star_Search_Algorithm aStar = new(maze);
-       // await aStar.FindShortestPath();
+        A_Star_Search_Algorithm aStar = new(maze);
+        await aStar.FindShortestPath();
     }
 
     private void MazeScreen_Paint(object sender, PaintEventArgs e)

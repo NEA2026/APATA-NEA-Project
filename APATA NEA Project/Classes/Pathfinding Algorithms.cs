@@ -6,7 +6,7 @@ internal abstract class Pathfinding_Algorithms(Maze mazeParam)
 
     protected readonly Color currentCellColour = Color.Orange;
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
-    private readonly Color shortestPathColour = Color.RebeccaPurple;
+    private readonly Color shortestPathColour = Color.LightBlue;
 
     public abstract Task FindShortestPath();
 

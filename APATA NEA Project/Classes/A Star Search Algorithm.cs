@@ -25,7 +25,7 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
             visitedCells.Add(current);
 
             current.PaintCurrentCell(currentCellColour);
-            await Task.Delay(5);
+            await Task.Delay(0);
 
             if (current == goal)
             {

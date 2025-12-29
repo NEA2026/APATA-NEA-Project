@@ -109,6 +109,7 @@ partial class StartScreen
         txtGenerationDelay.Name = "txtGenerationDelay";
         txtGenerationDelay.Size = new Size(64, 24);
         txtGenerationDelay.TabIndex = 5;
+        txtGenerationDelay.TextAlign = HorizontalAlignment.Right;
         // 
         // lblGenerationDelay
         // 

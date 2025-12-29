@@ -39,10 +39,15 @@ public partial class StartScreen : Form
 
         catch
         {
-            MessageBox.Show("Input error: Generation Delay must be an integer greater than or equal to 0.", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Input error: Generation Delay must be an integer between 0 and 10000", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
+        if (generationDelay < 0 || generationDelay > 10000)
+        {
+            MessageBox.Show("Input error: Generation Delay must be an integer between 0 and 10000", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
 
         int percentage;
 
