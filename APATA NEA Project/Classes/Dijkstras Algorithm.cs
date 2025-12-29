@@ -11,9 +11,9 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
     private readonly Cell source = maze.Cells[0, 0];
     private readonly Cell target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
 
-    public override void FindShortestPath(Graphics graphics)
+    public override async Task FindShortestPath()
     {
-        Initialise();
+        InitialiseAlgorithm();
 
         while (priorityQueue.Count != 0)
         {
@@ -21,8 +21,8 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
             current.Visited = true;
             visitedCells.Add(current);
 
-            current.PaintCurrentCell(graphics, currentCellColour);
-            //Thread.Sleep(5);
+            current.PaintCurrentCell(currentCellColour);
+            await Task.Delay(0);
 
             List<Cell> neighbours = FindNeighbours(current);
 
@@ -38,13 +38,13 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 }
             }
 
-            current.PaintVisitedCell(graphics, visitedCellColour);
+            current.PaintCell(visitedCellColour);
         }
 
-        ReconstructPath(graphics, previous, target);
+        await ReconstructPath(previous, target);
     }
 
-    protected override void Initialise()
+    protected override void InitialiseAlgorithm()
     {
         source.Visited = false;
         distance[source] = 0;

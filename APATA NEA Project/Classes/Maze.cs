@@ -1,36 +1,62 @@
-﻿namespace APATA_NEA_Project.Classes;
+﻿using APATA_NEA_Project.Forms;
+
+namespace APATA_NEA_Project.Classes;
 
 internal class Maze
 {
+    public readonly MazeScreen MazeScreen;
     public readonly int Rows;
     public readonly int Columns;
     public readonly int CellWidth;
     public readonly Cell[,] Cells;
 
+    private readonly int generationDelay;
+    private readonly int percentage;
+
     private readonly Color currentCellColour = Color.Orange;
     private readonly Color visitedCellColour = Color.LightGreen;
-
-    public Maze(int rows, int columns, double scaling)
+    
+    public Maze(MazeScreen mazeScreen, int rows, int columns, int generationDelay, int percentage, int scaledMazeSize)
     {
+        this.MazeScreen = mazeScreen;
         this.Rows = rows;
         this.Columns = columns;
-
-        double guiSize = 520 * scaling;
-
+        
         if (rows >= columns)
         {
-            CellWidth = (int)guiSize / rows;
+            CellWidth = scaledMazeSize / rows;
         }
 
         else
         {
-            CellWidth = (int)guiSize / columns;
+            CellWidth = scaledMazeSize / columns;
         }
 
         Cells = new Cell[rows, columns];
+
+        this.generationDelay = generationDelay;
+        this.percentage = percentage;
     }
 
-    public void AddCells()
+    public async Task GenerateMaze()
+    {
+        AddCells();
+        DrawCells();
+        CreateStartAndExit();
+        await RunRandomisedDFS();
+
+        if (percentage == 100)
+        {
+            await RemoveDeadEnds();
+        }
+
+        else
+        {
+            await RemoveDeadEnds(percentage);
+        }
+    }
+
+    private void AddCells()
     {
         for (int row = 0; row < Rows; row++)
         {
@@ -38,41 +64,57 @@ internal class Maze
             {
                 Cell cell = new(this, row, column);
                 Cells[row, column] = cell;
-
-                int x = 25 + column * CellWidth;
-                int y = 25 + row * CellWidth;
-                cell.X = x;
-                cell.Y = y;
             }
         }
     }
 
-    public void DrawCells(Graphics graphics)
+    private void DrawCells()
     {
-        using Pen wall = new(Color.Black, 1.5f);
+        using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
+        using Pen wall = new(Color.Black, 1);
 
-        foreach (Cell cell in Cells)
+        for (int row = 0; row <= Rows; row++)
         {
-            graphics.DrawRectangle(wall, cell.X, cell.Y, CellWidth, CellWidth);
+            graphics.DrawLine(wall, 0, row * CellWidth, Rows * CellWidth, row * CellWidth);
+        }
+
+        for (int column = 0; column <= Columns; column++)
+        {
+            graphics.DrawLine(wall, column * CellWidth, 0, column * CellWidth, Columns * CellWidth);
         }
     }
 
-    public void GenerateMaze(Graphics graphics, int animationDelay)
+    private void CreateStartAndExit()
     {
+        using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
+        using Pen removeWall = new(Color.White, 1);
+
+        Cell start = Cells[0, 0];
+        start.TopWall = false;
+        graphics.DrawLine(removeWall, start.X + 1, start.Y, start.X + CellWidth - 1, start.Y);
+
+        Cell exit = Cells[Rows - 1, Columns - 1];
+        exit.BottomWall = false;
+        graphics.DrawLine(removeWall, exit.X + CellWidth - 1, exit.Y + CellWidth, exit.X + 1, exit.Y + CellWidth);
+    }
+
+    private async Task RunRandomisedDFS()
+    {
+        int startDelay = 500;
+        await Task.Delay(startDelay);
+
         Cell current = Cells[0, 0];
         current.Visited = true;
 
         Stack<Cell> cellStack = new();
         cellStack.Push(current);
 
-        CreateStartAndExit(graphics, current);
-
         while (cellStack.Count != 0)
         {
             current = cellStack.Pop();
 
-            current.PaintCurrentCell(graphics, currentCellColour);
-            Thread.Sleep(animationDelay);
+            current.PaintCurrentCell(currentCellColour);
+            await Task.Delay(generationDelay);
 
             List<Cell> unvisitedNeighbours = FindUnvisitedNeighbours(current);
 
@@ -90,20 +132,8 @@ internal class Maze
                 cellStack.Push(next);
             }
 
-            current.PaintVisitedCell(graphics, visitedCellColour);
+            current.PaintCell(visitedCellColour);
         }
-    }
-
-    private void CreateStartAndExit(Graphics graphics, Cell current)
-    {
-        using Pen removeWall = new(Color.White, 1.5f);
-
-        current.TopWall = false;
-        graphics.DrawLine(removeWall, current.X + 1, current.Y, current.X + CellWidth - 1, current.Y);
-
-        Cell end = Cells[Rows - 1, Columns - 1];
-        end.BottomWall = false;
-        graphics.DrawLine(removeWall, end.X + CellWidth - 1, end.Y + CellWidth, end.X + 1, end.Y + CellWidth);
     }
 
     private List<Cell> FindUnvisitedNeighbours(Cell current)
@@ -184,14 +214,14 @@ internal class Maze
         }
     }
 
-    public void RemoveDeadEnds(Graphics graphics)
+    public async Task RemoveDeadEnds()
     {
         List<Cell> deadEnds = FindDeadEnds();
         Cell[] deadEndsArray = deadEnds.ToArray();
-        RemoveWallsFromDeadEnds(graphics, deadEndsArray);
+        await RemoveWallsFromDeadEnds(deadEndsArray);
     }
 
-    public void RemoveDeadEnds(Graphics graphics, double percentage)
+    public async Task RemoveDeadEnds(double percentage)
     {
         List<Cell> deadEnds = FindDeadEnds();
         double multiplier = percentage / 100;
@@ -207,7 +237,7 @@ internal class Maze
             deadEnds.Remove(deadEnds[randomDeadEnd]);
         }
         
-        RemoveWallsFromDeadEnds(graphics, randomDeadEnds);
+        await RemoveWallsFromDeadEnds(randomDeadEnds);
     }
 
     private List<Cell> FindDeadEnds()
@@ -233,8 +263,9 @@ internal class Maze
         return deadEnds;
     }
 
-    private void RemoveWallsFromDeadEnds(Graphics graphics, Cell[] deadEnds)
+    private async Task RemoveWallsFromDeadEnds(Cell[] deadEnds)
     {
+        using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
         using Pen path = new(visitedCellColour, 1.5f);
 
         foreach (Cell cell in deadEnds)
@@ -255,7 +286,10 @@ internal class Maze
                         {
                             cell.TopWall = false;
                             removed = true;
+
                             graphics.DrawLine(path, x + 1, y, x + CellWidth - 1, y);
+                            MazeScreen.Invalidate();
+                            await Task.Delay(generationDelay);
                         }
                         break;
 
@@ -264,7 +298,10 @@ internal class Maze
                         {
                             cell.RightWall = false;
                             removed = true;
+
                             graphics.DrawLine(path, x + CellWidth, y + 1, x + CellWidth, y + CellWidth - 1);
+                            MazeScreen.Invalidate();
+                            await Task.Delay(generationDelay);
                         }
                         break;
 
@@ -273,7 +310,10 @@ internal class Maze
                         {
                             cell.BottomWall = false;
                             removed = true;
+
                             graphics.DrawLine(path, x + CellWidth - 1, y + CellWidth, x + 1, y + CellWidth);
+                            MazeScreen.Invalidate();
+                            await Task.Delay(generationDelay);
                         }
                         break;
 
@@ -282,7 +322,10 @@ internal class Maze
                         {
                             cell.LeftWall = false;
                             removed = true;
+
                             graphics.DrawLine(path, x, y + CellWidth - 1, x, y + 1);
+                            MazeScreen.Invalidate();
+                            await Task.Delay(generationDelay);
                         }
                         break;
                 }

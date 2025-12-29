@@ -32,6 +32,9 @@ partial class StartScreen
         txtWidth = new TextBox();
         txtHeight = new TextBox();
         grpMazeSize = new GroupBox();
+        lblMilliseconds = new Label();
+        txtGenerationDelay = new TextBox();
+        lblGenerationDelay = new Label();
         lblPercentage = new Label();
         lblRemoveDeadends = new Label();
         txtRemoveDeadends = new TextBox();
@@ -59,7 +62,6 @@ partial class StartScreen
         txtWidth.Name = "txtWidth";
         txtWidth.Size = new Size(64, 24);
         txtWidth.TabIndex = 1;
-        txtWidth.Text = "5";
         txtWidth.TextAlign = HorizontalAlignment.Right;
         // 
         // txtHeight
@@ -68,11 +70,13 @@ partial class StartScreen
         txtHeight.Name = "txtHeight";
         txtHeight.Size = new Size(64, 24);
         txtHeight.TabIndex = 2;
-        txtHeight.Text = "5";
         txtHeight.TextAlign = HorizontalAlignment.Right;
         // 
         // grpMazeSize
         // 
+        grpMazeSize.Controls.Add(lblMilliseconds);
+        grpMazeSize.Controls.Add(txtGenerationDelay);
+        grpMazeSize.Controls.Add(lblGenerationDelay);
         grpMazeSize.Controls.Add(lblPercentage);
         grpMazeSize.Controls.Add(lblRemoveDeadends);
         grpMazeSize.Controls.Add(txtRemoveDeadends);
@@ -83,16 +87,41 @@ partial class StartScreen
         grpMazeSize.Controls.Add(txtHeight);
         grpMazeSize.Controls.Add(lblWidth);
         grpMazeSize.Font = new Font("Microsoft Sans Serif", 9F);
-        grpMazeSize.Location = new Point(128, 256);
+        grpMazeSize.Location = new Point(128, 235);
         grpMazeSize.Name = "grpMazeSize";
-        grpMazeSize.Size = new Size(256, 128);
+        grpMazeSize.Size = new Size(256, 160);
         grpMazeSize.TabIndex = 3;
         grpMazeSize.TabStop = false;
         grpMazeSize.Text = "Enter Maze Size:";
         // 
+        // lblMilliseconds
+        // 
+        lblMilliseconds.AutoSize = true;
+        lblMilliseconds.Location = new Point(204, 89);
+        lblMilliseconds.Name = "lblMilliseconds";
+        lblMilliseconds.Size = new Size(29, 18);
+        lblMilliseconds.TabIndex = 5;
+        lblMilliseconds.Text = "ms";
+        // 
+        // txtGenerationDelay
+        // 
+        txtGenerationDelay.Location = new Point(138, 86);
+        txtGenerationDelay.Name = "txtGenerationDelay";
+        txtGenerationDelay.Size = new Size(64, 24);
+        txtGenerationDelay.TabIndex = 5;
+        // 
+        // lblGenerationDelay
+        // 
+        lblGenerationDelay.AutoSize = true;
+        lblGenerationDelay.Location = new Point(6, 89);
+        lblGenerationDelay.Name = "lblGenerationDelay";
+        lblGenerationDelay.Size = new Size(126, 18);
+        lblGenerationDelay.TabIndex = 5;
+        lblGenerationDelay.Text = "Generation Delay:";
+        // 
         // lblPercentage
         // 
-        lblPercentage.Location = new Point(213, 95);
+        lblPercentage.Location = new Point(219, 117);
         lblPercentage.Name = "lblPercentage";
         lblPercentage.Size = new Size(21, 18);
         lblPercentage.TabIndex = 5;
@@ -100,7 +129,7 @@ partial class StartScreen
         // 
         // lblRemoveDeadends
         // 
-        lblRemoveDeadends.Location = new Point(6, 95);
+        lblRemoveDeadends.Location = new Point(6, 117);
         lblRemoveDeadends.Name = "lblRemoveDeadends";
         lblRemoveDeadends.Size = new Size(139, 18);
         lblRemoveDeadends.TabIndex = 5;
@@ -108,11 +137,11 @@ partial class StartScreen
         // 
         // txtRemoveDeadends
         // 
-        txtRemoveDeadends.Location = new Point(147, 92);
+        txtRemoveDeadends.Location = new Point(151, 114);
         txtRemoveDeadends.Name = "txtRemoveDeadends";
         txtRemoveDeadends.Size = new Size(64, 24);
         txtRemoveDeadends.TabIndex = 5;
-        txtRemoveDeadends.Text = "20";
+        txtRemoveDeadends.Text = "50";
         txtRemoveDeadends.TextAlign = HorizontalAlignment.Right;
         // 
         // lblCellsHeight
@@ -189,4 +218,7 @@ partial class StartScreen
     private Label lblRemoveDeadends;
     private TextBox txtRemoveDeadends;
     private Label lblPercentage;
+    private Label lblMilliseconds;
+    private TextBox txtGenerationDelay;
+    private Label lblGenerationDelay;
 }

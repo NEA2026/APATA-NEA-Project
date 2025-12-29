@@ -6,8 +6,8 @@ internal class Cell(Maze mazeParam, int row, int column)
     public readonly int Row = row;
     public readonly int Column = column;
 
-    public int X;
-    public int Y;
+    public int X => Column * maze.CellWidth;
+    public int Y => Row * maze.CellWidth;
 
     public bool TopWall = true;
     public bool RightWall = true;
@@ -16,38 +16,46 @@ internal class Cell(Maze mazeParam, int row, int column)
 
     public bool Visited = false;
 
-    public void PaintCurrentCell(Graphics graphics, Color currentCellColour)
+    public void PaintCurrentCell(Color colour)
     {
-        using Brush currentCellBrush = new SolidBrush(currentCellColour);
-        graphics.FillRectangle(currentCellBrush, X + 1, Y + 1, (float)(maze.CellWidth - 1.5), (float)(maze.CellWidth - 1.5));
+        using Graphics graphics = Graphics.FromImage(maze.MazeScreen.MazeBitmap);
+        
+        using Brush currentCellBrush = new SolidBrush(colour);
+        graphics.FillRectangle(currentCellBrush, X + 1, Y + 1, maze.CellWidth - 1, maze.CellWidth - 1);
+
+        maze.MazeScreen.Invalidate();
     }
 
-    public void PaintVisitedCell(Graphics graphics, Color visitedCellColour)
+    public void PaintCell(Color colour)
     {
-        using Brush visitedCellBrush = new SolidBrush(visitedCellColour);
-        graphics.FillRectangle(visitedCellBrush, X + 1, Y + 1, (float)(maze.CellWidth - 1.5), (float)(maze.CellWidth - 1.5));
+        using Graphics graphics = Graphics.FromImage(maze.MazeScreen.MazeBitmap);
 
+        using Brush brush = new SolidBrush(colour);
+        graphics.FillRectangle(brush, X + 1, Y + 1, maze.CellWidth - 1, maze.CellWidth - 1);
+
+        using Pen path = new(brush, 1);
         int CellWidth = maze.CellWidth;
-        using Pen visitedCellPen = new(visitedCellBrush, 1.5f);
 
         if (!TopWall)
         {
-            graphics.DrawLine(visitedCellPen, X + 1, Y, X + CellWidth - 1, Y);
+            graphics.DrawLine(path, X + 1, Y, X + CellWidth - 1, Y);
         }
 
         if (!RightWall)
         {
-            graphics.DrawLine(visitedCellPen, X + CellWidth, Y + 1, X + CellWidth, Y + CellWidth - 1);
+            graphics.DrawLine(path, X + CellWidth, Y + 1, X + CellWidth, Y + CellWidth - 1);
         }
 
         if (!BottomWall)
         {
-            graphics.DrawLine(visitedCellPen, X + CellWidth - 1, Y + CellWidth, X + 1, Y + CellWidth);
+            graphics.DrawLine(path, X + CellWidth - 1, Y + CellWidth, X + 1, Y + CellWidth);
         }
 
         if (!LeftWall)
         {
-            graphics.DrawLine(visitedCellPen, X, Y + CellWidth - 1, X, Y + 1);
+            graphics.DrawLine(path, X, Y + CellWidth - 1, X, Y + 1);
         }
+
+        maze.MazeScreen.Invalidate();
     }
 }

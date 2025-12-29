@@ -54,7 +54,8 @@ partial class MazeScreen
         Name = "MazeScreen";
         StartPosition = FormStartPosition.CenterScreen;
         Text = "APATA";
-        Paint += Maze_Paint;
+        Shown += MazeScreen_Shown;
+        Paint += MazeScreen_Paint;
         ResumeLayout(false);
     }
 

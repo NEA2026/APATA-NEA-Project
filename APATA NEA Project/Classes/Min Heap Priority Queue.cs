@@ -12,12 +12,9 @@ internal class MinHeapPriorityQueue
 
     private readonly Dictionary<Cell, int> indexMap = new();
 
-    public int Count { get { return minHeap.Count; } }
+    public int Count => minHeap.Count;
 
-    public bool Contains(Cell cell)
-    {
-        return indexMap.ContainsKey(cell);
-    }
+    public bool Contains(Cell cell) => indexMap.ContainsKey(cell);
 
     public void Insert(Cell cell, int distance)
     {

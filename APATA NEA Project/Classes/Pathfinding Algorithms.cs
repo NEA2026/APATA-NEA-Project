@@ -8,9 +8,9 @@ internal abstract class Pathfinding_Algorithms(Maze mazeParam)
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
     private readonly Color shortestPathColour = Color.RebeccaPurple;
 
-    public abstract void FindShortestPath(Graphics graphics);
+    public abstract Task FindShortestPath();
 
-    protected abstract void Initialise();
+    protected abstract void InitialiseAlgorithm();
 
     protected List<Cell> FindNeighbours(Cell cell)
     {
@@ -43,7 +43,7 @@ internal abstract class Pathfinding_Algorithms(Maze mazeParam)
         return neighbours;
     }
 
-    protected void ReconstructPath(Graphics graphics, Dictionary<Cell, Cell> cameFrom, Cell current)
+    protected async Task ReconstructPath(Dictionary<Cell, Cell> cameFrom, Cell current)
     {
         Stack<Cell> shortestPath = new();
 
@@ -53,14 +53,13 @@ internal abstract class Pathfinding_Algorithms(Maze mazeParam)
             current = cameFrom[current];
         }
 
+        Cell start = maze.Cells[0, 0];
+        shortestPath.Push(start);
+
         foreach (Cell cell in shortestPath)
         {
-            PaintShortestPath(graphics, cell);
+            cell.PaintCell(shortestPathColour);
+            await Task.Delay(0);
         }
-    }
-
-    private void PaintShortestPath(Graphics graphics, Cell cell)
-    {
-        cell.PaintVisitedCell(graphics, shortestPathColour);
-    }
+    }  
 }

@@ -12,9 +12,9 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
     private readonly Cell start = maze.Cells[0, 0];
     private readonly Cell goal = maze.Cells[maze.Columns - 1, maze.Rows - 1];
 
-    public override void FindShortestPath(Graphics graphics)
+    public override async Task FindShortestPath()
     {
-        Initialise();
+        InitialiseAlgorithm();
         
         while (openSet.Count != 0)
         {
@@ -24,12 +24,12 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
             current.Visited = true;
             visitedCells.Add(current);
 
-            current.PaintCurrentCell(graphics, currentCellColour);
-            //Thread.Sleep(5);
+            current.PaintCurrentCell(currentCellColour);
+            await Task.Delay(5);
 
             if (current == goal)
             {
-                ReconstructPath(graphics, cameFrom, current);
+                await ReconstructPath(cameFrom, current);
                 break;
             }
 
@@ -57,11 +57,11 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 }
             }
 
-            current.PaintVisitedCell(graphics, visitedCellColour);
+            current.PaintCell(visitedCellColour);
         }
     }
 
-    protected override void Initialise()
+    protected override void InitialiseAlgorithm()
     {
         start.Visited = false;
         gScore[start] = 0;

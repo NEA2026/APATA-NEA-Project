@@ -20,16 +20,30 @@ public partial class StartScreen : Form
 
         catch
         {
-            MessageBox.Show("Input error: Height and width must be integers between 5 and 50 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Input error: Height and width must be integers between 5 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
         
-        if (rows > 50 || rows < 5 || columns > 50 || columns < 5)
+        if (rows > 100 || rows < 5 || columns > 100 || columns < 5)
         {
-            MessageBox.Show("Input error: Height and width must be integers between 5 and 50 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Input error: Height and width must be integers between 5 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
-        
+
+        int generationDelay;
+
+        try
+        {
+            generationDelay = Convert.ToInt32(txtGenerationDelay.Text.Trim());
+        }
+
+        catch
+        {
+            MessageBox.Show("Input error: Generation Delay must be an integer greater than or equal to 0.", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+
         int percentage;
 
         try
@@ -49,9 +63,7 @@ public partial class StartScreen : Form
             return;
         }
 
-        int animationDelay = 0;
-
-        MazeScreen mazeScreen = new(rows, columns, percentage, animationDelay);
+        MazeScreen mazeScreen = new(rows, columns, generationDelay, percentage);
         Hide();
         mazeScreen.Show();
     }
