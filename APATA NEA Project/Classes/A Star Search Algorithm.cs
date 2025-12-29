@@ -10,7 +10,7 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
     private Dictionary<Cell, int> fScore = new();
 
     private readonly Cell start = maze.Cells[0, 0];
-    private readonly Cell goal = maze.Cells[maze.Columns - 1, maze.Rows - 1];
+    private readonly Cell goal = maze.Cells[maze.Rows - 1, maze.Columns - 1];
 
     public override async Task FindShortestPath()
     {
@@ -18,14 +18,11 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
         
         while (openSet.Count != 0)
         {
-            using Brush currentCell = new SolidBrush(Color.DarkRed);
-
             Cell current = openSet.ExtractMin();
             current.Visited = true;
             visitedCells.Add(current);
 
-            current.PaintCurrentCell(currentCellColour);
-            await Task.Delay(0);
+            await current.PaintCurrentCell(currentCellColour, animationDelay);
 
             if (current == goal)
             {
@@ -57,7 +54,7 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 }
             }
 
-            current.PaintCell(visitedCellColour);
+            await current.PaintCell(visitedCellColour, animationDelay);
         }
     }
 

@@ -1,8 +1,8 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal class Cell(Maze mazeParam, int row, int column)
+internal class Cell(Maze maze, int row, int column)
 {
-    private readonly Maze maze = mazeParam;
+    private readonly Maze maze = maze;
     public readonly int Row = row;
     public readonly int Column = column;
 
@@ -16,7 +16,7 @@ internal class Cell(Maze mazeParam, int row, int column)
 
     public bool Visited = false;
 
-    public void PaintCurrentCell(Color colour)
+    public async Task PaintCurrentCell(Color colour, int delay)
     {
         using Graphics graphics = Graphics.FromImage(maze.MazeScreen.MazeBitmap);
         
@@ -24,9 +24,10 @@ internal class Cell(Maze mazeParam, int row, int column)
         graphics.FillRectangle(currentCellBrush, X + 1, Y + 1, maze.CellWidth - 1, maze.CellWidth - 1);
 
         maze.MazeScreen.Invalidate();
+        await Task.Delay(delay);
     }
 
-    public void PaintCell(Color colour)
+    public async Task PaintCell(Color colour, int delay)
     {
         using Graphics graphics = Graphics.FromImage(maze.MazeScreen.MazeBitmap);
 
@@ -57,5 +58,6 @@ internal class Cell(Maze mazeParam, int row, int column)
         }
 
         maze.MazeScreen.Invalidate();
+        await Task.Delay(delay);
     }
 }

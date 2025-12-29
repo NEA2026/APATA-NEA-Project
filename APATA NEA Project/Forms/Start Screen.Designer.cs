@@ -28,13 +28,10 @@ partial class StartScreen
     /// </summary>
     private void InitializeComponent()
     {
-        btnGenerateMaze = new Button();
+        btnOpenMazeScreen = new Button();
         txtWidth = new TextBox();
         txtHeight = new TextBox();
         grpMazeSize = new GroupBox();
-        lblMilliseconds = new Label();
-        txtGenerationDelay = new TextBox();
-        lblGenerationDelay = new Label();
         lblPercentage = new Label();
         lblRemoveDeadends = new Label();
         txtRemoveDeadends = new TextBox();
@@ -46,15 +43,15 @@ partial class StartScreen
         grpMazeSize.SuspendLayout();
         SuspendLayout();
         // 
-        // btnGenerateMaze
+        // btnOpenMazeScreen
         // 
-        btnGenerateMaze.Location = new Point(128, 401);
-        btnGenerateMaze.Name = "btnGenerateMaze";
-        btnGenerateMaze.Size = new Size(256, 32);
-        btnGenerateMaze.TabIndex = 0;
-        btnGenerateMaze.Text = "Generate Maze";
-        btnGenerateMaze.UseVisualStyleBackColor = true;
-        btnGenerateMaze.Click += btnGenerateMaze_Click;
+        btnOpenMazeScreen.Location = new Point(128, 401);
+        btnOpenMazeScreen.Name = "btnOpenMazeScreen";
+        btnOpenMazeScreen.Size = new Size(256, 32);
+        btnOpenMazeScreen.TabIndex = 0;
+        btnOpenMazeScreen.Text = "Open Maze Screen";
+        btnOpenMazeScreen.UseVisualStyleBackColor = true;
+        btnOpenMazeScreen.Click += btnOpenMazeScreen_Click;
         // 
         // txtWidth
         // 
@@ -74,9 +71,6 @@ partial class StartScreen
         // 
         // grpMazeSize
         // 
-        grpMazeSize.Controls.Add(lblMilliseconds);
-        grpMazeSize.Controls.Add(txtGenerationDelay);
-        grpMazeSize.Controls.Add(lblGenerationDelay);
         grpMazeSize.Controls.Add(lblPercentage);
         grpMazeSize.Controls.Add(lblRemoveDeadends);
         grpMazeSize.Controls.Add(txtRemoveDeadends);
@@ -87,42 +81,16 @@ partial class StartScreen
         grpMazeSize.Controls.Add(txtHeight);
         grpMazeSize.Controls.Add(lblWidth);
         grpMazeSize.Font = new Font("Microsoft Sans Serif", 9F);
-        grpMazeSize.Location = new Point(128, 235);
+        grpMazeSize.Location = new Point(128, 267);
         grpMazeSize.Name = "grpMazeSize";
-        grpMazeSize.Size = new Size(256, 160);
+        grpMazeSize.Size = new Size(256, 128);
         grpMazeSize.TabIndex = 3;
         grpMazeSize.TabStop = false;
-        grpMazeSize.Text = "Enter Maze Size:";
-        // 
-        // lblMilliseconds
-        // 
-        lblMilliseconds.AutoSize = true;
-        lblMilliseconds.Location = new Point(204, 89);
-        lblMilliseconds.Name = "lblMilliseconds";
-        lblMilliseconds.Size = new Size(29, 18);
-        lblMilliseconds.TabIndex = 5;
-        lblMilliseconds.Text = "ms";
-        // 
-        // txtGenerationDelay
-        // 
-        txtGenerationDelay.Location = new Point(138, 86);
-        txtGenerationDelay.Name = "txtGenerationDelay";
-        txtGenerationDelay.Size = new Size(64, 24);
-        txtGenerationDelay.TabIndex = 5;
-        txtGenerationDelay.TextAlign = HorizontalAlignment.Right;
-        // 
-        // lblGenerationDelay
-        // 
-        lblGenerationDelay.AutoSize = true;
-        lblGenerationDelay.Location = new Point(6, 89);
-        lblGenerationDelay.Name = "lblGenerationDelay";
-        lblGenerationDelay.Size = new Size(126, 18);
-        lblGenerationDelay.TabIndex = 5;
-        lblGenerationDelay.Text = "Generation Delay:";
+        grpMazeSize.Text = "Enter Maze Configurations:";
         // 
         // lblPercentage
         // 
-        lblPercentage.Location = new Point(219, 117);
+        lblPercentage.Location = new Point(219, 89);
         lblPercentage.Name = "lblPercentage";
         lblPercentage.Size = new Size(21, 18);
         lblPercentage.TabIndex = 5;
@@ -130,7 +98,7 @@ partial class StartScreen
         // 
         // lblRemoveDeadends
         // 
-        lblRemoveDeadends.Location = new Point(6, 117);
+        lblRemoveDeadends.Location = new Point(6, 89);
         lblRemoveDeadends.Name = "lblRemoveDeadends";
         lblRemoveDeadends.Size = new Size(139, 18);
         lblRemoveDeadends.TabIndex = 5;
@@ -138,7 +106,7 @@ partial class StartScreen
         // 
         // txtRemoveDeadends
         // 
-        txtRemoveDeadends.Location = new Point(151, 114);
+        txtRemoveDeadends.Location = new Point(151, 86);
         txtRemoveDeadends.Name = "txtRemoveDeadends";
         txtRemoveDeadends.Size = new Size(64, 24);
         txtRemoveDeadends.TabIndex = 5;
@@ -194,7 +162,7 @@ partial class StartScreen
         ClientSize = new Size(490, 461);
         Controls.Add(lblTitle);
         Controls.Add(grpMazeSize);
-        Controls.Add(btnGenerateMaze);
+        Controls.Add(btnOpenMazeScreen);
         FormBorderStyle = FormBorderStyle.Fixed3D;
         MaximizeBox = false;
         Name = "StartScreen";
@@ -207,7 +175,7 @@ partial class StartScreen
 
     #endregion
 
-    private Button btnGenerateMaze;
+    private Button btnOpenMazeScreen;
     private TextBox txtWidth;
     private TextBox txtHeight;
     private GroupBox grpMazeSize;
@@ -219,7 +187,4 @@ partial class StartScreen
     private Label lblRemoveDeadends;
     private TextBox txtRemoveDeadends;
     private Label lblPercentage;
-    private Label lblMilliseconds;
-    private TextBox txtGenerationDelay;
-    private Label lblGenerationDelay;
 }

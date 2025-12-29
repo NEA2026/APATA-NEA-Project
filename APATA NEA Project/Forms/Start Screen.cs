@@ -7,11 +7,11 @@ public partial class StartScreen : Form
         InitializeComponent();
     }
 
-    private void btnGenerateMaze_Click(object sender, EventArgs e)
+    private void btnOpenMazeScreen_Click(object sender, EventArgs e)
     {
         int rows;
         int columns;
-        
+
         try
         {
             rows = Convert.ToInt32(txtHeight.Text.Trim());
@@ -23,29 +23,10 @@ public partial class StartScreen : Form
             MessageBox.Show("Input error: Height and width must be integers between 5 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
-        
+
         if (rows > 100 || rows < 5 || columns > 100 || columns < 5)
         {
             MessageBox.Show("Input error: Height and width must be integers between 5 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        int generationDelay;
-
-        try
-        {
-            generationDelay = Convert.ToInt32(txtGenerationDelay.Text.Trim());
-        }
-
-        catch
-        {
-            MessageBox.Show("Input error: Generation Delay must be an integer between 0 and 10000", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        if (generationDelay < 0 || generationDelay > 10000)
-        {
-            MessageBox.Show("Input error: Generation Delay must be an integer between 0 and 10000", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -58,7 +39,7 @@ public partial class StartScreen : Form
 
         catch
         {
-            MessageBox.Show("Input error: Remove Deadends must be an integer between 0 and 100 (inclusive).","APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Input error: Remove Deadends must be an integer between 0 and 100 (inclusive).", "APATA", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -68,7 +49,7 @@ public partial class StartScreen : Form
             return;
         }
 
-        MazeScreen mazeScreen = new(rows, columns, generationDelay, percentage);
+        MazeScreen mazeScreen = new(rows, columns, percentage);
         Hide();
         mazeScreen.Show();
     }

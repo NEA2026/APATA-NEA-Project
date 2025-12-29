@@ -21,8 +21,7 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
             current.Visited = true;
             visitedCells.Add(current);
 
-            current.PaintCurrentCell(currentCellColour);
-            await Task.Delay(0);
+            await current.PaintCurrentCell(currentCellColour, animationDelay);
 
             List<Cell> neighbours = FindNeighbours(current);
 
@@ -38,7 +37,7 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 }
             }
 
-            current.PaintCell(visitedCellColour);
+            await current.PaintCell(visitedCellColour, animationDelay);
         }
 
         await ReconstructPath(previous, target);

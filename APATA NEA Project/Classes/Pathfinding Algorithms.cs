@@ -1,8 +1,10 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal abstract class Pathfinding_Algorithms(Maze mazeParam)
+internal abstract class Pathfinding_Algorithms(Maze maze)
 {
-    protected readonly Maze maze = mazeParam;
+    protected readonly Maze maze = maze;
+
+    protected int animationDelay = 0;
 
     protected readonly Color currentCellColour = Color.Orange;
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
@@ -58,8 +60,7 @@ internal abstract class Pathfinding_Algorithms(Maze mazeParam)
 
         foreach (Cell cell in shortestPath)
         {
-            cell.PaintCell(shortestPathColour);
-            await Task.Delay(0);
+            await cell.PaintCell(shortestPathColour, animationDelay);
         }
     }  
 }

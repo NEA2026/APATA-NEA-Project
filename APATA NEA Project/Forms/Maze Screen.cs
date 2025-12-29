@@ -1,13 +1,21 @@
 using APATA_NEA_Project.Classes;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace APATA_NEA_Project.Forms;
 
 public partial class MazeScreen : Form
 {
     public readonly Bitmap MazeBitmap;
-    private readonly Maze maze;
+    private Maze maze;
+    private readonly int rows;
+    private readonly int columns;
+    private readonly int percentage;
+    private readonly int scaledMazeSize;
 
-    public MazeScreen(int rows, int columns, int generationDelay, int percentage)
+    private CancellationTokenSource? tokenSource;
+
+    public MazeScreen(int rows, int columns, int percentage)
     {
         InitializeComponent();
         this.DoubleBuffered = true;
@@ -22,21 +30,13 @@ public partial class MazeScreen : Form
         this.Height = (int)(formHeight * scaling);
 
         int scaledMazeSize = (int)(mazeSize * scaling);
-        int padding = 1;
-        this.MazeBitmap = new Bitmap(scaledMazeSize + padding, scaledMazeSize + padding);
 
-        maze = new(this, rows, columns, generationDelay, percentage, scaledMazeSize);
-    }
-
-    private async void MazeScreen_Shown(object sender, EventArgs e)
-    {
-        await maze.GenerateMaze();
-
-        //Dijkstras_Algorithm dijkstra = new(maze);
-        //await dijkstra.FindShortestPath();
-
-        A_Star_Search_Algorithm aStar = new(maze);
-        await aStar.FindShortestPath();
+        MazeBitmap = new Bitmap(scaledMazeSize + 1, scaledMazeSize + 1);
+        maze = new(this, rows, columns, percentage, scaledMazeSize);
+        this.rows = rows;
+        this.columns = columns;
+        this.percentage = percentage;
+        this.scaledMazeSize = scaledMazeSize;
     }
 
     private void MazeScreen_Paint(object sender, PaintEventArgs e)
@@ -50,5 +50,42 @@ public partial class MazeScreen : Form
         StartScreen startScreen = new();
         Hide();
         startScreen.Show();
+    }
+
+    private async void chkGenerateMaze_CheckedChanged(object sender, EventArgs e)
+    {
+        if (chkGenerateMaze.Checked && !maze.finishedDFS)
+        {
+            btnReset.Enabled = true;
+            btnStep.Enabled = true;
+            tokenSource = new();
+            await maze.Generate(tokenSource.Token);
+        }
+
+        else if (!chkGenerateMaze.Checked && !maze.finishedDFS)
+        {
+            tokenSource!.Cancel();
+        }
+    }
+
+    private void tbGenerationDelay_Scroll(object sender, EventArgs e)
+    {
+        lblGenerationDelayValue.Text = tbGenerationDelay.Value.ToString();
+        maze.generationDelay = tbGenerationDelay.Value;
+    }
+
+    private async void btnReset_Click(object sender, EventArgs e)
+    {
+        chkGenerateMaze.Checked = false;
+        tokenSource!.Cancel();
+        await Task.Delay(50);
+
+        maze = new(this, rows, columns, percentage, scaledMazeSize)
+        {
+            generationDelay = tbGenerationDelay.Value
+        };
+
+        btnReset.Enabled = false;
+        chkGenerateMaze.Enabled = true;
     }
 }
