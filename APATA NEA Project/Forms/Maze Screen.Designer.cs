@@ -34,7 +34,12 @@ partial class MazeScreen
         lblGenerationDelayValue = new Label();
         btnReset = new Button();
         btnStep = new Button();
+        cboPathfindingAlgorithm = new ComboBox();
+        chkSolveShortestPath = new CheckBox();
+        tbPathfindingDelay = new TrackBar();
+        lblPathfindingDelayValue = new Label();
         ((System.ComponentModel.ISupportInitialize)tbGenerationDelay).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)tbPathfindingDelay).BeginInit();
         SuspendLayout();
         // 
         // btnBack
@@ -62,8 +67,8 @@ partial class MazeScreen
         // 
         // tbGenerationDelay
         // 
-        tbGenerationDelay.Location = new Point(728, 108);
-        tbGenerationDelay.Maximum = 2000;
+        tbGenerationDelay.Location = new Point(853, 115);
+        tbGenerationDelay.Maximum = 1000;
         tbGenerationDelay.Name = "tbGenerationDelay";
         tbGenerationDelay.Size = new Size(130, 56);
         tbGenerationDelay.TabIndex = 3;
@@ -73,17 +78,18 @@ partial class MazeScreen
         // lblGenerationDelayValue
         // 
         lblGenerationDelayValue.AutoSize = true;
-        lblGenerationDelayValue.Location = new Point(779, 225);
+        lblGenerationDelayValue.Location = new Point(853, 174);
         lblGenerationDelayValue.Name = "lblGenerationDelayValue";
-        lblGenerationDelayValue.Size = new Size(0, 20);
+        lblGenerationDelayValue.Size = new Size(40, 20);
         lblGenerationDelayValue.TabIndex = 4;
+        lblGenerationDelayValue.Text = "0 ms";
         // 
         // btnReset
         // 
         btnReset.Enabled = false;
-        btnReset.Location = new Point(866, 42);
+        btnReset.Location = new Point(853, 42);
         btnReset.Name = "btnReset";
-        btnReset.Size = new Size(94, 29);
+        btnReset.Size = new Size(107, 29);
         btnReset.TabIndex = 5;
         btnReset.Text = "Reset";
         btnReset.UseVisualStyleBackColor = true;
@@ -91,13 +97,55 @@ partial class MazeScreen
         // 
         // btnStep
         // 
-        btnStep.Enabled = false;
-        btnStep.Location = new Point(743, 152);
+        btnStep.Location = new Point(728, 77);
         btnStep.Name = "btnStep";
-        btnStep.Size = new Size(126, 35);
+        btnStep.Size = new Size(119, 32);
         btnStep.TabIndex = 6;
         btnStep.Text = "Step";
         btnStep.UseVisualStyleBackColor = true;
+        btnStep.Click += btnStep_Click;
+        // 
+        // cboPathfindingAlgorithm
+        // 
+        cboPathfindingAlgorithm.DropDownStyle = ComboBoxStyle.DropDownList;
+        cboPathfindingAlgorithm.FormattingEnabled = true;
+        cboPathfindingAlgorithm.Items.AddRange(new object[] { "Dijkstra", "A*" });
+        cboPathfindingAlgorithm.Location = new Point(728, 314);
+        cboPathfindingAlgorithm.Name = "cboPathfindingAlgorithm";
+        cboPathfindingAlgorithm.Size = new Size(187, 28);
+        cboPathfindingAlgorithm.TabIndex = 8;
+        // 
+        // chkSolveShortestPath
+        // 
+        chkSolveShortestPath.Appearance = Appearance.Button;
+        chkSolveShortestPath.AutoSize = true;
+        chkSolveShortestPath.Enabled = false;
+        chkSolveShortestPath.Location = new Point(728, 365);
+        chkSolveShortestPath.Name = "chkSolveShortestPath";
+        chkSolveShortestPath.Size = new Size(145, 30);
+        chkSolveShortestPath.TabIndex = 9;
+        chkSolveShortestPath.Text = "Solve Shortest Path";
+        chkSolveShortestPath.UseVisualStyleBackColor = true;
+        chkSolveShortestPath.CheckedChanged += chkSolveShortestPath_CheckedChanged;
+        // 
+        // tbPathfindingDelay
+        // 
+        tbPathfindingDelay.Location = new Point(853, 424);
+        tbPathfindingDelay.Maximum = 1000;
+        tbPathfindingDelay.Name = "tbPathfindingDelay";
+        tbPathfindingDelay.Size = new Size(130, 56);
+        tbPathfindingDelay.TabIndex = 10;
+        tbPathfindingDelay.TickStyle = TickStyle.None;
+        tbPathfindingDelay.Scroll += tbPathfindingDelay_Scroll;
+        // 
+        // lblPathfindingDelayValue
+        // 
+        lblPathfindingDelayValue.AutoSize = true;
+        lblPathfindingDelayValue.Location = new Point(853, 483);
+        lblPathfindingDelayValue.Name = "lblPathfindingDelayValue";
+        lblPathfindingDelayValue.Size = new Size(40, 20);
+        lblPathfindingDelayValue.TabIndex = 11;
+        lblPathfindingDelayValue.Text = "0 ms";
         // 
         // MazeScreen
         // 
@@ -105,6 +153,10 @@ partial class MazeScreen
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = Color.White;
         ClientSize = new Size(1006, 717);
+        Controls.Add(lblPathfindingDelayValue);
+        Controls.Add(tbPathfindingDelay);
+        Controls.Add(chkSolveShortestPath);
+        Controls.Add(cboPathfindingAlgorithm);
         Controls.Add(btnStep);
         Controls.Add(btnReset);
         Controls.Add(lblGenerationDelayValue);
@@ -118,6 +170,7 @@ partial class MazeScreen
         Text = "APATA";
         Paint += MazeScreen_Paint;
         ((System.ComponentModel.ISupportInitialize)tbGenerationDelay).EndInit();
+        ((System.ComponentModel.ISupportInitialize)tbPathfindingDelay).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -130,4 +183,8 @@ partial class MazeScreen
     private CheckBox chkGenerateMaze;
     private Button btnReset;
     private Button btnStep;
+    private ComboBox cboPathfindingAlgorithm;
+    private CheckBox chkSolveShortestPath;
+    private TrackBar tbPathfindingDelay;
+    private Label lblPathfindingDelayValue;
 }

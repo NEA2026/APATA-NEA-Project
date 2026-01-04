@@ -1,6 +1,6 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
+internal class Dijkstras_Algorithm : Pathfinding_Algorithms
 {
     private MinHeapPriorityQueue priorityQueue = new();
     private List<Cell> visitedCells = new();
@@ -8,20 +8,31 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
     private Dictionary<Cell, Cell> previous = new();
     private Dictionary<Cell, int> distance = new();
 
-    private readonly Cell source = maze.Cells[0, 0];
-    private readonly Cell target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
+    private readonly Cell source;
+    private readonly Cell target;
 
-    public override async Task FindShortestPath()
+    public Dijkstras_Algorithm(Maze maze) : base(maze)
     {
-        InitialiseAlgorithm();
+        source = maze.Cells[0, 0];
+        target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
 
+        InitialiseAlgorithm();
+    }
+
+    public override async Task FindShortestPath(bool stepping, CancellationToken token)
+    {
         while (priorityQueue.Count != 0)
         {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
             Cell current = priorityQueue.ExtractMin();
             current.Visited = true;
             visitedCells.Add(current);
 
-            await current.PaintCurrentCell(currentCellColour, animationDelay);
+            await current.PaintCurrentCell(currentCellColour, pathfindingDelay);
 
             List<Cell> neighbours = FindNeighbours(current);
 
@@ -37,7 +48,12 @@ internal class Dijkstras_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 }
             }
 
-            await current.PaintCell(visitedCellColour, animationDelay);
+            await current.PaintCell(visitedCellColour, pathfindingDelay);
+
+            if (stepping)
+            {
+                return;
+            }
         }
 
         await ReconstructPath(previous, target);

@@ -4,13 +4,14 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
 {
     protected readonly Maze maze = maze;
 
-    protected int animationDelay = 0;
+    public int pathfindingDelay;
+    public bool finished = false;
 
     protected readonly Color currentCellColour = Color.Orange;
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
     private readonly Color shortestPathColour = Color.LightBlue;
 
-    public abstract Task FindShortestPath();
+    public abstract Task FindShortestPath(bool stepping, CancellationToken token);
 
     protected abstract void InitialiseAlgorithm();
 
@@ -60,7 +61,9 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
 
         foreach (Cell cell in shortestPath)
         {
-            await cell.PaintCell(shortestPathColour, animationDelay);
+            await cell.PaintCell(shortestPathColour, pathfindingDelay);
         }
+
+        finished = true;
     }  
 }

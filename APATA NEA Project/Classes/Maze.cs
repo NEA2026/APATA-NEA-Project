@@ -12,7 +12,7 @@ internal class Maze
     private readonly int percentage;
 
     public int generationDelay;
-    public bool finishedDFS = false;
+    public bool finished = false;
     private Cell current;
     private Stack<Cell> cellStack;
 
@@ -49,16 +49,16 @@ internal class Maze
         cellStack.Push(current);
     }
 
-    public async Task Generate(CancellationToken token)
+    public async Task Generate(bool stepping, CancellationToken token)
     {
-        await RunRandomisedDFS(token);
+        await RunRandomisedDFS(stepping, token);
 
-        if (percentage == 100 && finishedDFS)
+        if (percentage == 100 && finished)
         {
             RemoveDeadEnds();
         }
 
-        else if (finishedDFS)
+        else if (finished)
         {
             RemoveDeadEnds(percentage);
         }
@@ -96,7 +96,7 @@ internal class Maze
         graphics.DrawLine(removeWall, exit.X + CellWidth - 1, exit.Y + CellWidth, exit.X + 1, exit.Y + CellWidth);
     }
 
-    private async Task RunRandomisedDFS(CancellationToken token)
+    private async Task RunRandomisedDFS(bool stepping, CancellationToken token)
     {
         while (cellStack.Count != 0)
         {
@@ -125,9 +125,14 @@ internal class Maze
             }
 
             await current.PaintCell(visitedCellColour, generationDelay);
+
+            if (stepping)
+            {
+                return;
+            }
         }
 
-        finishedDFS = true;
+        finished = true;
     }
 
     private List<Cell> FindUnvisitedNeighbours(Cell current)

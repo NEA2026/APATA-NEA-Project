@@ -1,6 +1,6 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
+internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
 {
     private MinHeapPriorityQueue openSet = new();
     private List<Cell> visitedCells = new();
@@ -9,20 +9,30 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
     private Dictionary<Cell, int> gScore = new();
     private Dictionary<Cell, int> fScore = new();
 
-    private readonly Cell start = maze.Cells[0, 0];
-    private readonly Cell goal = maze.Cells[maze.Rows - 1, maze.Columns - 1];
+    private readonly Cell start;
+    private readonly Cell goal;
 
-    public override async Task FindShortestPath()
+    public A_Star_Search_Algorithm(Maze maze) : base(maze)
     {
+        start = maze.Cells[0, 0];
+        goal = maze.Cells[maze.Rows - 1, maze.Columns - 1];
+
         InitialiseAlgorithm();
-        
+    }
+    public override async Task FindShortestPath(bool stepping, CancellationToken token)
+    {
         while (openSet.Count != 0)
         {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
             Cell current = openSet.ExtractMin();
             current.Visited = true;
             visitedCells.Add(current);
 
-            await current.PaintCurrentCell(currentCellColour, animationDelay);
+            await current.PaintCurrentCell(currentCellColour, pathfindingDelay);
 
             if (current == goal)
             {
@@ -54,7 +64,12 @@ internal class A_Star_Search_Algorithm(Maze maze) : Pathfinding_Algorithms(maze)
                 }
             }
 
-            await current.PaintCell(visitedCellColour, animationDelay);
+            await current.PaintCell(visitedCellColour, pathfindingDelay);
+
+            if (stepping)
+            {
+                return;
+            }
         }
     }
 
