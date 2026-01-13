@@ -55,31 +55,22 @@ public partial class MazeScreen : Form
 
     private async void chkGenerateMaze_CheckedChanged(object sender, EventArgs e)
     {
-        if (chkGenerateMaze.Checked)
+        if (chkGenerateMaze.Checked && !maze.finished)
         {
-            btnReset.Enabled = true;
+            btnResetGeneration.Enabled = true;
 
             tokenSource = new();
             await maze.Generate(false, tokenSource.Token);
-
-            if (maze.finished)
-            {
-                chkGenerateMaze.Checked = false;
-                chkGenerateMaze.Enabled = false;
-                btnStep.Enabled = false;
-                tbGenerationDelay.Enabled = false;
-
-                chkSolveShortestPath.Enabled = true;
-                tokenSource = null;
-
-                dijkstra = new(maze);
-                aStar = new(maze);
-            }
         }
 
-        else if (!chkGenerateMaze.Checked)
+        else if (!chkGenerateMaze.Checked && !maze.finished)
         {
             tokenSource?.Cancel();
+        }
+
+        if (maze.finished)
+        {
+            MazeFinished();
         }
     }
 
@@ -89,9 +80,10 @@ public partial class MazeScreen : Form
         maze.generationDelay = tbGenerationDelay.Value;
     }
 
-    private async void btnReset_Click(object sender, EventArgs e)
+    private async void btnResetGeneration_Click(object sender, EventArgs e)
     {
         chkGenerateMaze.Checked = false;
+        btnResetGeneration.Enabled = false;
 
         tokenSource?.Cancel();
         await Task.Delay(50);
@@ -101,86 +93,91 @@ public partial class MazeScreen : Form
             generationDelay = tbGenerationDelay.Value
         };
 
-        btnReset.Enabled = false;
-
         chkGenerateMaze.Enabled = true;
-        btnStep.Enabled = true;
+        btnStepGeneration.Enabled = true;
         tbGenerationDelay.Enabled = true;
     }
 
-    private async void btnStep_Click(object sender, EventArgs e)
+    private async void btnStepGeneration_Click(object sender, EventArgs e)
+    {
+        if (!maze.finished)
+        {
+            chkGenerateMaze.Checked = false;
+            btnStepGeneration.Enabled = false;
+            btnResetGeneration.Enabled = false;
+
+            tokenSource?.Cancel();
+            await Task.Delay(50);
+
+            tokenSource = new();
+            await maze.Generate(true, tokenSource.Token);
+
+            btnStepGeneration.Enabled = true;
+        }
+
+        else if (maze.finished)
+        {
+            MazeFinished();
+        }
+
+        btnResetGeneration.Enabled = true;
+    }
+
+    private void MazeFinished()
     {
         chkGenerateMaze.Checked = false;
+        chkGenerateMaze.Enabled = false;
+        btnStepGeneration.Enabled = false;
+        tbGenerationDelay.Enabled = false;
+        tokenSource = null;
 
-        btnStep.Enabled = false;
-        btnReset.Enabled = false;
+        dijkstra = new(maze);
+        aStar = new(maze);
 
-        tokenSource?.Cancel();
-        await Task.Delay(50);
+        cboPathfindingAlgorithm.Enabled = true;
+        chkSolveShortestPath.Enabled = true;
+        tbPathfindingDelay.Enabled = true;
+        btnStepPathfinding.Enabled = true;
 
-        tokenSource = new();
-        await maze.Generate(true, tokenSource.Token);
-
-        btnStep.Enabled = true;
-        btnReset.Enabled = true;
-
-        if (maze.finished)
-        {
-            chkGenerateMaze.Enabled = false;
-            btnStep.Enabled = false;
-            tbGenerationDelay.Enabled = false;
-
-            chkSolveShortestPath.Enabled = true;
-            tokenSource = null;
-
-            dijkstra = new(maze);
-            aStar = new(maze);
-        }
+        cboPathfindingAlgorithm.SelectedIndex = 0;
     }
 
     private async void chkSolveShortestPath_CheckedChanged(object sender, EventArgs e)
     {
-        if (chkSolveShortestPath.Checked)
+        if (chkSolveShortestPath.Checked && (!dijkstra!.finished && !aStar!.finished))
         {
             cboPathfindingAlgorithm.Enabled = false;
+            btnResetPathfinding.Enabled = true;
 
             tokenSource = new();
 
-            if (cboPathfindingAlgorithm.SelectedIndex == 0 && !dijkstra!.finished)
+            if (cboPathfindingAlgorithm.SelectedIndex == 0)
             {
                 await dijkstra.FindShortestPath(false, tokenSource.Token);
 
-                if (dijkstra.finished)
-                {
-                    chkSolveShortestPath.Checked = false;
-                    chkSolveShortestPath.Enabled = false;
-                    tbGenerationDelay.Enabled = false;
-                }
             }
 
-            else if (cboPathfindingAlgorithm.SelectedIndex == 1 && !aStar!.finished)
+            else if (cboPathfindingAlgorithm.SelectedIndex == 1)
             {
                 await aStar.FindShortestPath(false, tokenSource.Token);
-
-                if (aStar.finished)
-                {
-                    chkSolveShortestPath.Checked = false;
-                    chkSolveShortestPath.Enabled = false;
-                    tbGenerationDelay.Enabled = false;
-                }
             }
         }
 
-        else if (!chkSolveShortestPath.Checked)
+        else if (!chkSolveShortestPath.Checked && (!dijkstra!.finished && !aStar!.finished))
         {
             tokenSource?.Cancel();
+        }
+
+        if (dijkstra!.finished || aStar!.finished)
+        {
+            PathfindingFinished();
         }
     }
 
     private void tbPathfindingDelay_Scroll(object sender, EventArgs e)
     {
         lblPathfindingDelayValue.Text = tbPathfindingDelay.Value.ToString() + " ms";
-        
+
         if (cboPathfindingAlgorithm.SelectedIndex == 0)
         {
             dijkstra!.pathfindingDelay = tbPathfindingDelay.Value;
@@ -190,5 +187,71 @@ public partial class MazeScreen : Form
         {
             aStar!.pathfindingDelay = tbPathfindingDelay.Value;
         }
+    }
+
+    private async void btnResetPathfinding_Click(object sender, EventArgs e)
+    {
+        chkSolveShortestPath.Checked = false;
+        btnResetPathfinding.Enabled = false;
+
+        tokenSource?.Cancel();
+        await Task.Delay(100);
+
+        dijkstra = new(maze)
+        {
+            pathfindingDelay = tbPathfindingDelay.Value
+        };
+
+        aStar = new(maze)
+        {
+            pathfindingDelay = tbPathfindingDelay.Value
+        };
+
+        chkSolveShortestPath.Enabled = true;
+        btnStepPathfinding.Enabled = true;
+        cboPathfindingAlgorithm.Enabled = true;
+    }
+
+    private async void btnStepPathfinding_Click(object sender, EventArgs e)
+    {
+        chkSolveShortestPath.Checked = false;
+
+        if (!dijkstra!.finished && !aStar!.finished)
+        {
+            btnStepPathfinding.Enabled = false;
+            btnResetPathfinding.Enabled = false;
+
+            tokenSource?.Cancel();
+            await Task.Delay(50);
+
+            tokenSource = new();
+
+            if (cboPathfindingAlgorithm.SelectedIndex == 0)
+            {
+                await dijkstra.FindShortestPath(true, tokenSource.Token);
+            }
+
+            if (cboPathfindingAlgorithm.SelectedIndex == 1)
+            {
+                await aStar.FindShortestPath(true, tokenSource.Token);
+            }
+
+            btnStepPathfinding.Enabled = true;
+        }
+
+        else if (dijkstra.finished || aStar.finished)
+        {
+            PathfindingFinished();
+        }
+
+        btnResetPathfinding.Enabled = true;
+    }
+
+    private void PathfindingFinished()
+    {
+        chkSolveShortestPath.Checked = false;
+        chkSolveShortestPath.Enabled = false;
+        btnStepPathfinding.Enabled = false;
+        tbGenerationDelay.Enabled = false;
     }
 }

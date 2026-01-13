@@ -1,4 +1,6 @@
-﻿namespace APATA_NEA_Project.Classes;
+﻿using System.Drawing;
+
+namespace APATA_NEA_Project.Classes;
 
 internal abstract class Pathfinding_Algorithms(Maze maze)
 {
@@ -7,6 +9,7 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
     public int pathfindingDelay;
     public bool finished = false;
 
+    protected readonly Color unvisitedCellColour = Color.LightGreen;
     protected readonly Color currentCellColour = Color.Orange;
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
     private readonly Color shortestPathColour = Color.LightBlue;
@@ -14,6 +17,11 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
     public abstract Task FindShortestPath(bool stepping, CancellationToken token);
 
     protected abstract void InitialiseAlgorithm();
+
+    protected void ResetColour(Cell cell)
+    {
+        _ = cell.PaintCellWithWalls(unvisitedCellColour, 0);
+    }
 
     protected List<Cell> FindNeighbours(Cell cell)
     {
@@ -61,7 +69,7 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
 
         foreach (Cell cell in shortestPath)
         {
-            await cell.PaintCell(shortestPathColour, pathfindingDelay);
+            await cell.PaintCellWithWalls(shortestPathColour, pathfindingDelay);
         }
 
         finished = true;

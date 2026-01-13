@@ -77,7 +77,7 @@ internal class Maze
                 Cells[row, column] = cell;
 
                 graphics.DrawRectangle(wall, cell.X, cell.Y, CellWidth, CellWidth);
-                Task task = cell.PaintCurrentCell(unvisitedCellColour, 0);
+                _ = cell.PaintCell(unvisitedCellColour, 0);
             }
         }
     }
@@ -106,7 +106,7 @@ internal class Maze
             }
 
             current = cellStack.Pop();
-            await current.PaintCurrentCell(currentCellColour, generationDelay);
+            await current.PaintCell(currentCellColour, generationDelay);
 
             List<Cell> unvisitedNeighbours = FindUnvisitedNeighbours(current);
 
@@ -124,7 +124,7 @@ internal class Maze
                 cellStack.Push(next);
             }
 
-            await current.PaintCell(visitedCellColour, generationDelay);
+            await current.PaintCellWithWalls(visitedCellColour, generationDelay);
 
             if (stepping)
             {

@@ -32,7 +32,7 @@ internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
             current.Visited = true;
             visitedCells.Add(current);
 
-            await current.PaintCurrentCell(currentCellColour, pathfindingDelay);
+            await current.PaintCell(currentCellColour, pathfindingDelay);
 
             if (current == goal)
             {
@@ -64,7 +64,7 @@ internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
                 }
             }
 
-            await current.PaintCell(visitedCellColour, pathfindingDelay);
+            await current.PaintCellWithWalls(visitedCellColour, pathfindingDelay);
 
             if (stepping)
             {
@@ -82,6 +82,8 @@ internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
 
         foreach (Cell cell in maze.Cells)
         {
+            ResetColour(cell);
+
             if (cell != start)
             {
                 cell.Visited = false;

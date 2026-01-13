@@ -32,12 +32,14 @@ partial class MazeScreen
         chkGenerateMaze = new CheckBox();
         tbGenerationDelay = new TrackBar();
         lblGenerationDelayValue = new Label();
-        btnReset = new Button();
-        btnStep = new Button();
+        btnResetGeneration = new Button();
+        btnStepGeneration = new Button();
         cboPathfindingAlgorithm = new ComboBox();
         chkSolveShortestPath = new CheckBox();
         tbPathfindingDelay = new TrackBar();
         lblPathfindingDelayValue = new Label();
+        btnStepPathfinding = new Button();
+        btnResetPathfinding = new Button();
         ((System.ComponentModel.ISupportInitialize)tbGenerationDelay).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbPathfindingDelay).BeginInit();
         SuspendLayout();
@@ -84,30 +86,31 @@ partial class MazeScreen
         lblGenerationDelayValue.TabIndex = 4;
         lblGenerationDelayValue.Text = "0 ms";
         // 
-        // btnReset
+        // btnResetGeneration
         // 
-        btnReset.Enabled = false;
-        btnReset.Location = new Point(853, 42);
-        btnReset.Name = "btnReset";
-        btnReset.Size = new Size(107, 29);
-        btnReset.TabIndex = 5;
-        btnReset.Text = "Reset";
-        btnReset.UseVisualStyleBackColor = true;
-        btnReset.Click += btnReset_Click;
+        btnResetGeneration.Enabled = false;
+        btnResetGeneration.Location = new Point(853, 42);
+        btnResetGeneration.Name = "btnResetGeneration";
+        btnResetGeneration.Size = new Size(107, 29);
+        btnResetGeneration.TabIndex = 5;
+        btnResetGeneration.Text = "Reset";
+        btnResetGeneration.UseVisualStyleBackColor = true;
+        btnResetGeneration.Click += btnResetGeneration_Click;
         // 
-        // btnStep
+        // btnStepGeneration
         // 
-        btnStep.Location = new Point(728, 77);
-        btnStep.Name = "btnStep";
-        btnStep.Size = new Size(119, 32);
-        btnStep.TabIndex = 6;
-        btnStep.Text = "Step";
-        btnStep.UseVisualStyleBackColor = true;
-        btnStep.Click += btnStep_Click;
+        btnStepGeneration.Location = new Point(728, 77);
+        btnStepGeneration.Name = "btnStepGeneration";
+        btnStepGeneration.Size = new Size(119, 32);
+        btnStepGeneration.TabIndex = 6;
+        btnStepGeneration.Text = "Step";
+        btnStepGeneration.UseVisualStyleBackColor = true;
+        btnStepGeneration.Click += btnStepGeneration_Click;
         // 
         // cboPathfindingAlgorithm
         // 
         cboPathfindingAlgorithm.DropDownStyle = ComboBoxStyle.DropDownList;
+        cboPathfindingAlgorithm.Enabled = false;
         cboPathfindingAlgorithm.FormattingEnabled = true;
         cboPathfindingAlgorithm.Items.AddRange(new object[] { "Dijkstra", "A*" });
         cboPathfindingAlgorithm.Location = new Point(728, 314);
@@ -130,7 +133,7 @@ partial class MazeScreen
         // 
         // tbPathfindingDelay
         // 
-        tbPathfindingDelay.Location = new Point(853, 424);
+        tbPathfindingDelay.Location = new Point(853, 453);
         tbPathfindingDelay.Maximum = 1000;
         tbPathfindingDelay.Name = "tbPathfindingDelay";
         tbPathfindingDelay.Size = new Size(130, 56);
@@ -141,11 +144,33 @@ partial class MazeScreen
         // lblPathfindingDelayValue
         // 
         lblPathfindingDelayValue.AutoSize = true;
-        lblPathfindingDelayValue.Location = new Point(853, 483);
+        lblPathfindingDelayValue.Location = new Point(853, 512);
         lblPathfindingDelayValue.Name = "lblPathfindingDelayValue";
         lblPathfindingDelayValue.Size = new Size(40, 20);
         lblPathfindingDelayValue.TabIndex = 11;
         lblPathfindingDelayValue.Text = "0 ms";
+        // 
+        // btnStepPathfinding
+        // 
+        btnStepPathfinding.Enabled = false;
+        btnStepPathfinding.Location = new Point(728, 401);
+        btnStepPathfinding.Name = "btnStepPathfinding";
+        btnStepPathfinding.Size = new Size(119, 32);
+        btnStepPathfinding.TabIndex = 12;
+        btnStepPathfinding.Text = "Step";
+        btnStepPathfinding.UseVisualStyleBackColor = true;
+        btnStepPathfinding.Click += btnStepPathfinding_Click;
+        // 
+        // btnResetPathfinding
+        // 
+        btnResetPathfinding.Enabled = false;
+        btnResetPathfinding.Location = new Point(879, 366);
+        btnResetPathfinding.Name = "btnResetPathfinding";
+        btnResetPathfinding.Size = new Size(107, 29);
+        btnResetPathfinding.TabIndex = 13;
+        btnResetPathfinding.Text = "Reset";
+        btnResetPathfinding.UseVisualStyleBackColor = true;
+        btnResetPathfinding.Click += btnResetPathfinding_Click;
         // 
         // MazeScreen
         // 
@@ -153,12 +178,14 @@ partial class MazeScreen
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = Color.White;
         ClientSize = new Size(1006, 717);
+        Controls.Add(btnResetPathfinding);
+        Controls.Add(btnStepPathfinding);
         Controls.Add(lblPathfindingDelayValue);
         Controls.Add(tbPathfindingDelay);
         Controls.Add(chkSolveShortestPath);
         Controls.Add(cboPathfindingAlgorithm);
-        Controls.Add(btnStep);
-        Controls.Add(btnReset);
+        Controls.Add(btnStepGeneration);
+        Controls.Add(btnResetGeneration);
         Controls.Add(lblGenerationDelayValue);
         Controls.Add(tbGenerationDelay);
         Controls.Add(chkGenerateMaze);
@@ -181,10 +208,12 @@ partial class MazeScreen
     private TrackBar tbGenerationDelay;
     private Label lblGenerationDelayValue;
     private CheckBox chkGenerateMaze;
-    private Button btnReset;
-    private Button btnStep;
+    private Button btnResetGeneration;
+    private Button btnStepGeneration;
     private ComboBox cboPathfindingAlgorithm;
     private CheckBox chkSolveShortestPath;
     private TrackBar tbPathfindingDelay;
     private Label lblPathfindingDelayValue;
+    private Button btnStepPathfinding;
+    private Button btnResetPathfinding;
 }

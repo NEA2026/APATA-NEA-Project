@@ -16,7 +16,7 @@ internal class Cell(Maze maze, int row, int column)
 
     public bool Visited = false;
 
-    public async Task PaintCurrentCell(Color colour, int delay)
+    public async Task PaintCell(Color colour, int delay)
     {
         using Graphics graphics = Graphics.FromImage(maze.MazeScreen.MazeBitmap);
         
@@ -27,7 +27,7 @@ internal class Cell(Maze maze, int row, int column)
         await Task.Delay(delay);
     }
 
-    public async Task PaintCell(Color colour, int delay)
+    public async Task PaintCellWithWalls(Color colour, int delay)
     {
         using Graphics graphics = Graphics.FromImage(maze.MazeScreen.MazeBitmap);
 

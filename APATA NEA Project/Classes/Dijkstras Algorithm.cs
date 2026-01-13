@@ -14,7 +14,7 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
     public Dijkstras_Algorithm(Maze maze) : base(maze)
     {
         source = maze.Cells[0, 0];
-        target = maze.Cells[maze.Columns - 1, maze.Rows - 1];
+        target = maze.Cells[maze.Rows - 1, maze.Columns - 1];
 
         InitialiseAlgorithm();
     }
@@ -32,7 +32,7 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
             current.Visited = true;
             visitedCells.Add(current);
 
-            await current.PaintCurrentCell(currentCellColour, pathfindingDelay);
+            await current.PaintCell(currentCellColour, pathfindingDelay);
 
             List<Cell> neighbours = FindNeighbours(current);
 
@@ -48,7 +48,7 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
                 }
             }
 
-            await current.PaintCell(visitedCellColour, pathfindingDelay);
+            await current.PaintCellWithWalls(visitedCellColour, pathfindingDelay);
 
             if (stepping)
             {
@@ -67,6 +67,8 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
 
         foreach (Cell cell in maze.Cells)
         {
+            ResetColour(cell);
+
             if (cell != source)
             {
                 cell.Visited = false;
