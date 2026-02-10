@@ -1,6 +1,6 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
-internal class MinHeapPriorityQueue
+internal class BinaryMinHeapPriorityQueue
 {
     internal class HeapNode(Cell cell, int distance)
     {
@@ -29,6 +29,11 @@ internal class MinHeapPriorityQueue
 
     public Cell ExtractMin()
     {
+        if (minHeap.Count == 0)
+        {
+            throw new ArgumentOutOfRangeException("The priority queue is empty!");
+        }
+
         Cell min = minHeap[0].Cell;
         int lastIndex = minHeap.Count - 1;
 
@@ -80,34 +85,26 @@ internal class MinHeapPriorityQueue
     
     private void SiftDown(int index)
     {
-        while (index * 2 + 1 < minHeap.Count)
+        int leftChildIndex = 2 * index + 1;
+        int rightChildIndex = 2 * index + 2;
+        int smallestChildIndex = index;
+
+        if (leftChildIndex < minHeap.Count && minHeap[leftChildIndex].Distance < minHeap[smallestChildIndex].Distance)
         {
-            int leftChildIndex = index * 2 + 1;
-            int rightChildIndex = index * 2 + 2;
-            int smallestChildIndex;
+            smallestChildIndex = leftChildIndex;
+        }
 
-            if (rightChildIndex < minHeap.Count && minHeap[rightChildIndex].Distance < minHeap[leftChildIndex].Distance)
-            {
-                smallestChildIndex = rightChildIndex;
-            }
+        if (rightChildIndex < minHeap.Count && minHeap[rightChildIndex].Distance < minHeap[smallestChildIndex].Distance)
+        {
+            smallestChildIndex = rightChildIndex;
+        }
 
-            else
-            {
-                smallestChildIndex = leftChildIndex;
-            }
-
-            if (minHeap[index].Distance > minHeap[smallestChildIndex].Distance)
-            {
-                (minHeap[smallestChildIndex], minHeap[index]) = (minHeap[index], minHeap[smallestChildIndex]);
-                indexMap[minHeap[index].Cell] = index;
-                indexMap[minHeap[smallestChildIndex].Cell] = smallestChildIndex;
-                index = smallestChildIndex;
-            }
-
-            else
-            {
-                break;
-            }
+        if (smallestChildIndex != index)
+        {
+            (minHeap[index], minHeap[smallestChildIndex]) = (minHeap[smallestChildIndex], minHeap[index]);
+            indexMap[minHeap[index].Cell] = index;
+            indexMap[minHeap[smallestChildIndex].Cell] = smallestChildIndex;
+            SiftDown(smallestChildIndex);
         }
     }
 }

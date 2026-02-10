@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace APATA_NEA_Project.Classes;
+﻿namespace APATA_NEA_Project.Classes;
 
 internal abstract class Pathfinding_Algorithms(Maze maze)
 {
@@ -9,7 +7,7 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
     public int pathfindingDelay;
     public bool finished = false;
 
-    protected readonly Color unvisitedCellColour = Color.LightGreen;
+    private readonly Color unvisitedCellColour = Color.LightGreen;
     protected readonly Color currentCellColour = Color.Orange;
     protected readonly Color visitedCellColour = Color.PaleVioletRed;
     private readonly Color shortestPathColour = Color.LightBlue;
@@ -57,15 +55,13 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
     protected async Task ReconstructPath(Dictionary<Cell, Cell> cameFrom, Cell current)
     {
         Stack<Cell> shortestPath = new();
+        shortestPath.Push(current);
 
         while (cameFrom.ContainsKey(current))
         {
-            shortestPath.Push(current);
             current = cameFrom[current];
+            shortestPath.Push(current);
         }
-
-        Cell start = maze.Cells[0, 0];
-        shortestPath.Push(start);
 
         foreach (Cell cell in shortestPath)
         {

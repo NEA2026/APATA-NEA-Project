@@ -2,7 +2,7 @@
 
 internal class Dijkstras_Algorithm : Pathfinding_Algorithms
 {
-    private MinHeapPriorityQueue priorityQueue = new();
+    private BinaryMinHeapPriorityQueue priorityQueue = new();
     private List<Cell> visitedCells = new();
 
     private Dictionary<Cell, Cell> previous = new();

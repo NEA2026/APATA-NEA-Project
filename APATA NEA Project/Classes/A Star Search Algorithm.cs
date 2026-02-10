@@ -2,7 +2,7 @@
 
 internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
 {
-    private MinHeapPriorityQueue openSet = new();
+    private BinaryMinHeapPriorityQueue openSet = new();
     private List<Cell> visitedCells = new();
 
     private Dictionary<Cell, Cell> cameFrom = new();

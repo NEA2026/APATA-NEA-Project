@@ -39,29 +39,27 @@ internal class Maze
         Cells = new Cell[rows, columns];
 
         this.percentage = percentage;
-
+        
         AddAndDrawCells();
         CreateStartAndExit();
-
-        current = Cells[0, 0];
-        cellStack = new Stack<Cell>();
-        current.Visited = true;
-        cellStack.Push(current);
+        InitialiseRandomisedDFS();
     }
 
     public async Task Generate(bool stepping, CancellationToken token)
     {
         await RunRandomisedDFS(stepping, token);
 
-        if (percentage == 100 && finished)
+        if (percentage == 100)
         {
             RemoveDeadEnds();
         }
 
-        else if (finished)
+        else if (percentage != 0)
         {
             RemoveDeadEnds(percentage);
         }
+
+        finished = true;
     }
 
     private void AddAndDrawCells()
@@ -94,6 +92,14 @@ internal class Maze
         Cell exit = Cells[Rows - 1, Columns - 1];
         exit.BottomWall = false;
         graphics.DrawLine(removeWall, exit.X + CellWidth - 1, exit.Y + CellWidth, exit.X + 1, exit.Y + CellWidth);
+    }
+
+    private void InitialiseRandomisedDFS()
+    {
+        current = Cells[0, 0];
+        cellStack = new Stack<Cell>();
+        current.Visited = true;
+        cellStack.Push(current);
     }
 
     private async Task RunRandomisedDFS(bool stepping, CancellationToken token)
@@ -131,8 +137,6 @@ internal class Maze
                 return;
             }
         }
-
-        finished = true;
     }
 
     private List<Cell> FindUnvisitedNeighbours(Cell current)
@@ -224,12 +228,12 @@ internal class Maze
     {
         List<Cell> deadEnds = FindDeadEnds();
         double multiplier = percentage / 100;
-        int deadEndsToRemove = (int)Math.Round(multiplier * deadEnds.Count, MidpointRounding.AwayFromZero);
+        int numOfDeadEndsToRemove = (int)Math.Round(multiplier * deadEnds.Count, MidpointRounding.AwayFromZero);
 
-        Cell[] randomDeadEnds = new Cell[deadEndsToRemove];
+        Cell[] randomDeadEnds = new Cell[numOfDeadEndsToRemove];
         Random random = new();
 
-        for (int i = 0; i < deadEndsToRemove; i++)
+        for (int i = 0; i < numOfDeadEndsToRemove; i++)
         {
             int randomDeadEnd = random.Next(0, deadEnds.Count);
             randomDeadEnds[i] = deadEnds[randomDeadEnd];
@@ -262,12 +266,12 @@ internal class Maze
         return deadEnds;
     }
 
-    private void RemoveWallsFromDeadEnds(Cell[] deadEnds)
+    private void RemoveWallsFromDeadEnds(Cell[] deadEndsToRemove)
     {
         using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
         using Pen removeWall = new(visitedCellColour, 1);
 
-        foreach (Cell cell in deadEnds)
+        foreach (Cell cell in deadEndsToRemove)
         {
             int x = cell.X;
             int y = cell.Y;
