@@ -1,14 +1,41 @@
 ﻿namespace APATA_NEA_Project.Classes;
 
+/// <summary>
+/// This subclass, which inherits from Pathfinding Algorithms, contains the code for Dijkstra’s Algorithm, 
+/// encapsulated in the overridden abstract methods FindShortestPath and InitialiseAlgorithm.
+/// </summary>
 internal class Dijkstras_Algorithm : Pathfinding_Algorithms
 {
+    /// <summary>
+    /// The binary min-heap priority queue which is used in Dijkstra’s algorithm.
+    /// </summary>
     private BinaryMinHeapPriorityQueue priorityQueue = new();
+
+    /// <summary>
+    /// A list of all the cells that have been visited by Dijkstra’s algorithm.
+    /// </summary>
     private List<Cell> visitedCells = new();
 
+    /// <summary>
+    /// A dictionary that maps each cell with its predecessor in Dijkstra’s algorithm.
+    /// </summary>
     private Dictionary<Cell, Cell> previous = new();
+
+    /// <summary>
+    /// A dictionary that maps each cell with its associated distance (as used in Dijkstra’s algorithm).
+    /// </summary>
     private Dictionary<Cell, int> distance = new();
 
+    /// <summary>
+    /// The cell that Dijkstra’s algorithm starts from. 
+    /// This is always the top-left cell in my program, as that is where the maze always starts from.
+    /// </summary>
     private readonly Cell source;
+
+    /// <summary>
+    /// The cell that Dijkstra’s algorithm is trying to find the shortest path to. 
+    /// This is always the bottom-right cell in my program, as that is where the exit of the maze is always located.
+    /// </summary>
     private readonly Cell target;
 
     public Dijkstras_Algorithm(Maze maze) : base(maze)
@@ -19,6 +46,12 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
         InitialiseAlgorithm();
     }
 
+    /// <summary>
+    /// Solves the shortest path from the maze’s start to its exit using Dijkstra’s algorithm which is encapsulated inside this overridden method.
+    /// </summary>
+    /// <param name="stepping"> A Boolean flag that determines whether the algorithm stops after one iteration/step (when true) or runs continuously (when false). </param>
+    /// <param name="token"> A cancellation token that, if a cancellation is requested, stops the algorithm after completing the current iteration. </param>
+    /// <returns></returns>
     public override async Task FindShortestPath(bool stepping, CancellationToken token)
     {
         while (priorityQueue.Count != 0)
@@ -59,6 +92,10 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
         await ReconstructPath(previous, target);
     }
 
+    /// <summary>
+    /// Initialises Dijkstra’s algorithm. 
+    /// This method utilises polymorphism by overriding an abstract base method, ensuring that the algorithm-specific initialisation is properly implemented.
+    /// </summary>
     protected override void InitialiseAlgorithm()
     {
         source.Visited = false;

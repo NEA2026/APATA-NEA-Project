@@ -2,30 +2,91 @@
 
 namespace APATA_NEA_Project.Classes;
 
+/// <summary>
+/// Stores information about a maze, such as the number of rows in the maze, 
+/// the number of columns in the maze, the width of every cell in the maze, 
+/// the dynamically generated 2D array of cell instantiations (which stores every cell instantiation in the maze) 
+/// and all the algorithms needed to generate the maze, such as the Randomised DFS algorithm.
+/// </summary>
 internal class Maze
 {
+    /// <summary>
+    /// The MazeScreen form instantiation the maze is displayed on.
+    /// </summary>
     public readonly MazeScreen MazeScreen;
+
+    /// <summary>
+    /// The number of rows in the maze, which the user inputted as the maze’s height on the Start Screen.
+    /// </summary>
     public readonly int Rows;
+
+    /// <summary>
+    /// The number of columns in the maze, which the user inputted as the maze’s width on the Start Screen.
+    /// </summary>
     public readonly int Columns;
+
+    /// <summary>
+    /// The width of the maze’s cells, which determines the size of each cell.
+    /// </summary>
     public readonly int CellWidth;
+
+    /// <summary>
+    /// A 2D array of cell instantiations which stores a cell instantiation for every cell in the maze.
+    /// </summary>
     public readonly Cell[,] Cells;
+
+    /// <summary>
+    /// The percentage of dead ends to remove from the maze, which the user inputted on the Start Screen.
+    /// </summary>
     private readonly int percentage;
 
-    public int generationDelay;
-    public bool finished = false;
-    private Cell current;
-    private Stack<Cell> cellStack;
+    /// <summary>
+    /// The delay in milliseconds that determines the generation speed of the maze.
+    /// </summary>
+    public int generationDelay { get; set; }
 
+    /// <summary>
+    /// A Boolean flag that indicates when the randomised DFS algorithm has finished generating the maze.
+    /// </summary>
+    public bool generationFinished { get; private set; } = false; 
+
+    /// <summary>
+    /// The current cell that is being processed in the randomised DFS algorithm.
+    /// </summary>
+    private Cell current = null!;
+
+    /// <summary>
+    /// The stack of cell instantiations which is used in the randomised DFS algorithm.
+    /// </summary>
+    private Stack<Cell> cellStack = null!;
+
+    /// <summary>
+    /// The colour of cells, on the Maze Screen, which have not been visited by the randomised DFS algorithm.
+    /// </summary>
     private readonly Color unvisitedCellColour = Color.White;
+
+    /// <summary>
+    /// The colour of the current cell, on the Maze Screen, being processed by the randomised DFS algorithm.
+    /// </summary>
     private readonly Color currentCellColour = Color.Orange;
+
+    /// <summary>
+    /// The colour of cells, on the Maze Screen, which have been visited by the randomised DFS algorithm.
+    /// </summary>
     private readonly Color visitedCellColour = Color.LightGreen;
-    
+
+    /// <summary>
+    /// Stores information about a maze, such as the number of rows in the maze,
+    /// the number of columns in the maze, the width of every cell in the maze,
+    /// the dynamically generated 2D array of cell instantiations (which stores every cell instantiation in the maze)
+    /// and all the algorithms needed to generate the maze, such as the Randomised DFS algorithm.
+    /// </summary>
     public Maze(MazeScreen mazeScreen, int rows, int columns, int percentage, int scaledMazeSize)
     {
         this.MazeScreen = mazeScreen;
         this.Rows = rows;
         this.Columns = columns;
-        
+
         if (rows >= columns)
         {
             CellWidth = scaledMazeSize / rows;
@@ -39,15 +100,28 @@ internal class Maze
         Cells = new Cell[rows, columns];
 
         this.percentage = percentage;
-        
+
         AddAndDrawCells();
         CreateStartAndExit();
         InitialiseRandomisedDFS();
     }
 
+    /// <summary>
+    /// Generates the maze, by calling RunRandomisedDFS and calling the appropriate dead end removal algorithm. 
+    /// </summary>
+    /// <param name="stepping"> A Boolean flag which is passed into the RunRandomisedDFS method. 
+    /// It determines whether the Randomised DFS algorithm runs continuously or executes one iteration (step) at a time. </param>
+    /// <param name="token"> A cancellation token which is passed into the RunRandomisedDFS method. 
+    /// It signals when the algorithm’s execution has been paused by the user and should stop executing. </param>
+    /// <returns></returns>
     public async Task Generate(bool stepping, CancellationToken token)
     {
-        await RunRandomisedDFS(stepping, token);
+        bool finishedDFS = await RunRandomisedDFS(stepping, token);
+
+        if (!finishedDFS)
+        {
+            return;
+        }
 
         if (percentage == 100)
         {
@@ -59,9 +133,14 @@ internal class Maze
             RemoveDeadEnds(percentage);
         }
 
-        finished = true;
+        generationFinished = true;
     }
 
+    /// <summary>
+    /// Dynamically populates the 2D array called Cells with a cell instantiation for each index in Cells, 
+    /// based on the values for the number of columns and rows in the maze that the user inputted as width and height on the Start Screen. 
+    /// Each cell is drawn onto the bitmap of the maze, and this bitmap is what is displayed on the Maze Screen.
+    /// </summary>
     private void AddAndDrawCells()
     {
         using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
@@ -102,13 +181,23 @@ internal class Maze
         cellStack.Push(current);
     }
 
-    private async Task RunRandomisedDFS(bool stepping, CancellationToken token)
+    /// <summary>
+    /// The encapsulated randomised depth first search (DFS) maze-generation algorithm. 
+    /// This algorithm generates a maze by randomly choosing an unvisited neighbouring cell of the current cell, 
+    /// removing the wall between them, and then setting that neighbouring cell as the current cell. 
+    /// This process repeats until every cell in the maze has been visited.
+    /// </summary>
+    /// <param name="stepping"> A Boolean flag that determines whether the algorithm stops after one iteration/step (when true) or runs continuously (when false). </param>
+    /// <param name="token"> A cancellation token that, if a cancellation is requested, stops the algorithm after completing the current iteration. </param>
+    /// <returns> Returns false if the Randomised DFS algorithm is requested to cancel or stepping.
+    /// Returns true when the algorithm has finished generating the maze. </returns>
+    private async Task<bool> RunRandomisedDFS(bool stepping, CancellationToken token)
     {
         while (cellStack.Count != 0)
         {
-            if (token.IsCancellationRequested) 
+            if (token.IsCancellationRequested)
             {
-                return;
+                return false;
             }
 
             current = cellStack.Pop();
@@ -134,11 +223,16 @@ internal class Maze
 
             if (stepping)
             {
-                return;
+                return false;
             }
         }
+
+        return true;
     }
 
+    /// <summary>
+    /// Finds any unvisited neighbouring cells to the top, right, bottom or left of the current cell and returns a list of them.
+    /// </summary>
     private List<Cell> FindUnvisitedNeighbours(Cell current)
     {
         List<Cell> unvisitedNeighbours = new();
@@ -186,6 +280,10 @@ internal class Maze
         return unvisitedNeighbours;
     }
 
+    /// <summary>
+    /// Identifies the two walls that must be removed to create a path between the current cell and the next cell to be visited, 
+    /// then sets the corresponding Boolean values to false for both cells.
+    /// </summary>
     private static void RemoveWalls(Cell current, Cell next)
     {
         int rowDifference = current.Row - next.Row;
@@ -217,6 +315,10 @@ internal class Maze
         }
     }
 
+    /// <summary>
+    /// Called if the user inputted to remove all (a percentage of 100%) the dead ends from the maze, on the Start Screen. 
+    /// This will create a plethora of solutions to the maze.
+    /// </summary>
     private void RemoveDeadEnds()
     {
         List<Cell> deadEnds = FindDeadEnds();
@@ -224,6 +326,10 @@ internal class Maze
         RemoveWallsFromDeadEnds(deadEndsArray);
     }
 
+    /// <summary>
+    /// Called if the user inputted to remove a percentage (greater than 0 and less than 100) of dead ends from the maze, on the Start Screen. 
+    /// This will create many solutions to the maze.
+    /// </summary>
     private void RemoveDeadEnds(double percentage)
     {
         List<Cell> deadEnds = FindDeadEnds();
@@ -239,14 +345,17 @@ internal class Maze
             randomDeadEnds[i] = deadEnds[randomDeadEnd];
             deadEnds.Remove(deadEnds[randomDeadEnd]);
         }
-        
+
         RemoveWallsFromDeadEnds(randomDeadEnds);
     }
 
+    /// <summary>
+    /// Finds all the dead ends in the maze and returns a list of them.
+    /// </summary>
     private List<Cell> FindDeadEnds()
     {
         List<Cell> deadEnds = new();
-        
+
         foreach (Cell cell in Cells)
         {
             int[] walls =
@@ -266,10 +375,15 @@ internal class Maze
         return deadEnds;
     }
 
+    /// <summary>
+    /// Iterates through each dead end in the parameter deadEndsToRemove, 
+    /// randomly chooses a wall to remove, sets the wall’s Boolean value to false and graphically removes it from the maze.
+    /// </summary>
     private void RemoveWallsFromDeadEnds(Cell[] deadEndsToRemove)
     {
         using Graphics graphics = Graphics.FromImage(MazeScreen.MazeBitmap);
         using Pen removeWall = new(visitedCellColour, 1);
+        Random random = new();
 
         foreach (Cell cell in deadEndsToRemove)
         {
@@ -279,7 +393,6 @@ internal class Maze
             bool removed = false;
             while (!removed)
             {
-                Random random = new();
                 int randomWall = random.Next(0, 3);
 
                 switch (randomWall)
@@ -287,36 +400,40 @@ internal class Maze
                     case 0:
                         if (cell.TopWall && cell.Row != 0)
                         {
-                            cell.TopWall = false;
-                            removed = true;
+                            Cell top = Cells[cell.Row - 1, cell.Column];
+                            RemoveWalls(cell, top);
                             graphics.DrawLine(removeWall, x + 1, y, x + CellWidth - 1, y);
+                            removed = true;
                         }
                         break;
 
                     case 1:
                         if (cell.RightWall && cell.Column != Columns - 1)
                         {
-                            cell.RightWall = false;
-                            removed = true;
+                            Cell right = Cells[cell.Row, cell.Column + 1];
+                            RemoveWalls(cell, right);
                             graphics.DrawLine(removeWall, x + CellWidth, y + 1, x + CellWidth, y + CellWidth - 1);
+                            removed = true;
                         }
                         break;
 
                     case 2:
                         if (cell.BottomWall && cell.Row != Rows - 1)
                         {
-                            cell.BottomWall = false;
-                            removed = true;
+                            Cell bottom = Cells[cell.Row + 1, cell.Column];
+                            RemoveWalls(cell, bottom);
                             graphics.DrawLine(removeWall, x + CellWidth - 1, y + CellWidth, x + 1, y + CellWidth);
+                            removed = true;
                         }
                         break;
 
                     case 3:
                         if (cell.LeftWall && cell.Column != 0)
                         {
-                            cell.LeftWall = false;
-                            removed = true;
+                            Cell left = Cells[cell.Row, cell.Column - 1];
+                            RemoveWalls(cell, left);
                             graphics.DrawLine(removeWall, x, y + CellWidth - 1, x, y + 1);
+                            removed = true;
                         }
                         break;
                 }

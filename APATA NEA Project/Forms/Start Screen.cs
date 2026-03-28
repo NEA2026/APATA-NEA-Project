@@ -1,5 +1,4 @@
 ﻿namespace APATA_NEA_Project.Forms;
-
 public partial class StartScreen : Form
 {
     public StartScreen()

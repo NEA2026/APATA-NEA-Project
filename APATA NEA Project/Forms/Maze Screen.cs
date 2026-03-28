@@ -42,7 +42,7 @@ public partial class MazeScreen : Form
 
     private void MazeScreen_Paint(object sender, PaintEventArgs e)
     {
-        int padding = 25;
+        int padding = 22;
         e.Graphics.DrawImage(MazeBitmap, padding, padding);
     }
 
@@ -55,7 +55,7 @@ public partial class MazeScreen : Form
 
     private async void chkGenerateMaze_CheckedChanged(object sender, EventArgs e)
     {
-        if (chkGenerateMaze.Checked && !maze.finished)
+        if (chkGenerateMaze.Checked && !maze.generationFinished)
         {
             btnResetGeneration.Enabled = true;
 
@@ -63,12 +63,12 @@ public partial class MazeScreen : Form
             await maze.Generate(false, tokenSource.Token);
         }
 
-        else if (!chkGenerateMaze.Checked && !maze.finished)
+        else if (!chkGenerateMaze.Checked && !maze.generationFinished)
         {
             tokenSource?.Cancel();
         }
 
-        if (maze.finished)
+        if (maze.generationFinished)
         {
             MazeFinished();
         }
@@ -82,6 +82,7 @@ public partial class MazeScreen : Form
 
     private async void btnResetGeneration_Click(object sender, EventArgs e)
     {
+        DisablePathfindingControls();
         chkGenerateMaze.Checked = false;
         btnResetGeneration.Enabled = false;
 
@@ -98,9 +99,18 @@ public partial class MazeScreen : Form
         tbGenerationDelay.Enabled = true;
     }
 
+    private void DisablePathfindingControls()
+    {
+        cboPathfindingAlgorithm.Enabled = false;
+        chkSolveShortestPath.Enabled = false;
+        btnResetPathfinding.Enabled = false;
+        btnStepPathfinding.Enabled = false;
+        tbPathfindingDelay.Enabled = false;
+    }
+
     private async void btnStepGeneration_Click(object sender, EventArgs e)
     {
-        if (!maze.finished)
+        if (!maze.generationFinished)
         {
             chkGenerateMaze.Checked = false;
             btnStepGeneration.Enabled = false;
@@ -115,7 +125,7 @@ public partial class MazeScreen : Form
             btnStepGeneration.Enabled = true;
         }
 
-        else if (maze.finished)
+        else if (maze.generationFinished)
         {
             MazeFinished();
         }
@@ -144,7 +154,7 @@ public partial class MazeScreen : Form
 
     private async void chkSolveShortestPath_CheckedChanged(object sender, EventArgs e)
     {
-        if (chkSolveShortestPath.Checked && (!dijkstra!.finished && !aStar!.finished))
+        if (chkSolveShortestPath.Checked && (!dijkstra!.pathfindingFinished && !aStar!.pathfindingFinished))
         {
             cboPathfindingAlgorithm.Enabled = false;
             btnResetPathfinding.Enabled = true;
@@ -163,12 +173,12 @@ public partial class MazeScreen : Form
             }
         }
 
-        else if (!chkSolveShortestPath.Checked && (!dijkstra!.finished && !aStar!.finished))
+        else if (!chkSolveShortestPath.Checked && (!dijkstra!.pathfindingFinished && !aStar!.pathfindingFinished))
         {
             tokenSource?.Cancel();
         }
 
-        if (dijkstra!.finished || aStar!.finished)
+        if (dijkstra!.pathfindingFinished || aStar!.pathfindingFinished)
         {
             PathfindingFinished();
         }
@@ -216,7 +226,7 @@ public partial class MazeScreen : Form
     {
         chkSolveShortestPath.Checked = false;
 
-        if (!dijkstra!.finished && !aStar!.finished)
+        if (!dijkstra!.pathfindingFinished && !aStar!.pathfindingFinished)
         {
             btnStepPathfinding.Enabled = false;
             btnResetPathfinding.Enabled = false;
@@ -239,7 +249,7 @@ public partial class MazeScreen : Form
             btnStepPathfinding.Enabled = true;
         }
 
-        else if (dijkstra.finished || aStar.finished)
+        else if (dijkstra.pathfindingFinished || aStar.pathfindingFinished)
         {
             PathfindingFinished();
         }
