@@ -6,6 +6,9 @@ public partial class StartScreen : Form
         InitializeComponent();
     }
 
+    /// <summary>
+    /// Validates inputs, creates and opens the Maze Screen form, and hides this form.
+    /// </summary>
     private void btnOpenMazeScreen_Click(object sender, EventArgs e)
     {
         int rows;

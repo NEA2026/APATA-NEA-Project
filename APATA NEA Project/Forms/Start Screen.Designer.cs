@@ -177,7 +177,6 @@ partial class StartScreen
         picMazeLogo.SizeMode = PictureBoxSizeMode.Zoom;
         picMazeLogo.TabIndex = 0;
         picMazeLogo.TabStop = false;
-        picMazeLogo.WaitOnLoad = true;
         // 
         // lblAPATAMeaning
         // 

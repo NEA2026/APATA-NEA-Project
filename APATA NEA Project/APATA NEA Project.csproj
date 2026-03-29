@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Logo and Icon\Maze Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Logo and Icon\Maze Icon.ico" />
-    <EmbeddedResource Include="Logo and Icon\Maze Logo.png" />
+    <Content Include="Logo and Icon\Maze Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Logo and Icon\Maze Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Logo and Icon\Maze Logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

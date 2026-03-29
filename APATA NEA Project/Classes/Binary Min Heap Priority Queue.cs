@@ -49,9 +49,11 @@ internal class BinaryMinHeapPriorityQueue
         HeapNode heapNode = new(cell, distance);
         minHeap.Add(heapNode);
 
+        // Append the heap node to the priority queue.
         int index = minHeap.Count - 1;
         indexMap[cell] = index;
 
+        // SiftUp the appended heap node to restore the heap condition.
         SiftUp(index);
     }
 
@@ -62,25 +64,34 @@ internal class BinaryMinHeapPriorityQueue
     {
         if (minHeap.Count == 0)
         {
+            // This should never happen in my program. 
+            // This error handling is a good example of defensive programming.
             throw new ArgumentOutOfRangeException("The priority queue is empty!");
         }
 
+        // In a binary min-heap the first heap node is always the minimum,
+        // in my program this corresponds to the cell with the shorest distance from the maze's start.
         Cell min = minHeap[0].Cell;
         int lastIndex = minHeap.Count - 1;
 
         indexMap.Remove(min);
 
+        // If the priority queue only contains one heap node, remove the heap node and return it, as this heap node must be the minimum.
         if (minHeap.Count == 1)
         {
             minHeap.RemoveAt(0);
             return min;
         }
 
+        // Replace the removed heap node (min) with the heap node at the end of the priority queue.
         minHeap[0] = minHeap[lastIndex];
+
+        // Update the indexMap to record the changes in indexes.
         indexMap[minHeap[0].Cell] = 0;
 
         minHeap.RemoveAt(lastIndex);
 
+        // SiftDown the prepended heap node to restore the heap condition.
         SiftDown(0);
         return min;
     }
@@ -90,9 +101,11 @@ internal class BinaryMinHeapPriorityQueue
     /// </summary>
     public void DecreaseKey(Cell cell, int shorterDistance)
     {
+        // Update the cell's distance to the shorterDistance that has been found.
         int index = indexMap[cell];
         minHeap[index].Distance = shorterDistance;
 
+        // SiftUp the heap node at index to restore the heap condition.
         SiftUp(index);
     }
 
@@ -103,13 +116,20 @@ internal class BinaryMinHeapPriorityQueue
     {
         while (index > 0)
         {
+            // In a binary min-heap the parent of any heap node can always be calculated using the formula (index - 1) / 2.
             int parentIndex = (index - 1) / 2;
 
+            // If the distance of a heap node is less than its parents, the heaps condition needs to be restored.
             if (minHeap[index].Distance < minHeap[parentIndex].Distance)
             {
+                // Swap the heap node with its parent.
                 (minHeap[index], minHeap[parentIndex]) = (minHeap[parentIndex], minHeap[index]);
+
+                // Update the indexMap to record the changes in indexes.
                 indexMap[minHeap[index].Cell] = index;
                 indexMap[minHeap[parentIndex].Cell] = parentIndex;
+
+                // The new heap node to be processed is the parent of the heap node that has just been processed.
                 index = parentIndex;
             }
 
@@ -125,15 +145,21 @@ internal class BinaryMinHeapPriorityQueue
     /// </summary>
     private void SiftDown(int index)
     {
+        // In a binary min-heap the left child of any heap node can always be calculated using the formula 2 * index + 1.
         int leftChildIndex = 2 * index + 1;
+
+        // In a binary min-heap the right child of any heap node can always be calculated using the formula 2 * index + 2.
         int rightChildIndex = 2 * index + 2;
+
         int smallestChildIndex = index;
 
+        // Runs if the smallest child is the heap nodes left child.
         if (leftChildIndex < minHeap.Count && minHeap[leftChildIndex].Distance < minHeap[smallestChildIndex].Distance)
         {
             smallestChildIndex = leftChildIndex;
         }
 
+        // Runs if the smallest child is the heap nodes right child.
         if (rightChildIndex < minHeap.Count && minHeap[rightChildIndex].Distance < minHeap[smallestChildIndex].Distance)
         {
             smallestChildIndex = rightChildIndex;
@@ -141,9 +167,14 @@ internal class BinaryMinHeapPriorityQueue
 
         if (smallestChildIndex != index)
         {
+            // Swap the heap node with its smallest child.
             (minHeap[index], minHeap[smallestChildIndex]) = (minHeap[smallestChildIndex], minHeap[index]);
+
+            // Update the indexMap to record the changes in indexes.
             indexMap[minHeap[index].Cell] = index;
             indexMap[minHeap[smallestChildIndex].Cell] = smallestChildIndex;
+
+            // Recursively SiftDown the smallest child to restore the heap condition.
             SiftDown(smallestChildIndex);
         }
     }

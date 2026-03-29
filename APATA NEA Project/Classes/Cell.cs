@@ -71,7 +71,11 @@ internal class Cell(Maze maze, int row, int column)
         using Brush currentCellBrush = new SolidBrush(colour);
         graphics.FillRectangle(currentCellBrush, X + 1, Y + 1, maze.CellWidth - 1, maze.CellWidth - 1);
 
+        // Triggers the maze screen form to repaint itself.
         maze.MazeScreen.Invalidate();
+
+        // Allows the Maze Screen form time to update itself so that the newly painted cell is displayed. 
+        // This line is also what controls the animation speed of the Randomised DFS maze generation algorithm.
         await Task.Delay(delay);
     }
 
@@ -89,27 +93,35 @@ internal class Cell(Maze maze, int row, int column)
         using Pen path = new(brush, 1);
         int CellWidth = maze.CellWidth;
 
+        // If the top wall of the cell has been removed it is painted over with the colour passed in as a parameter.
         if (!TopWall)
         {
             graphics.DrawLine(path, X + 1, Y, X + CellWidth - 1, Y);
         }
 
+        // If the right wall of the cell has been removed it is painted over with the colour passed in as a parameter.
         if (!RightWall)
         {
             graphics.DrawLine(path, X + CellWidth, Y + 1, X + CellWidth, Y + CellWidth - 1);
         }
 
+        // If the bottom wall of the cell has been removed it is painted over with the colour passed in as a parameter.
         if (!BottomWall)
         {
             graphics.DrawLine(path, X + CellWidth - 1, Y + CellWidth, X + 1, Y + CellWidth);
         }
 
+        // If the left wall of the cell has been removed it is painted over with the colour passed in as a parameter.
         if (!LeftWall)
         {
             graphics.DrawLine(path, X, Y + CellWidth - 1, X, Y + 1);
         }
 
+        // Triggers the Maze Screen form to repaint itself.
         maze.MazeScreen.Invalidate();
+
+        // Allows the maze screen form time to update itself so that the newly painted cell is displayed. 
+        // This line is also what controls the animation speed of the Randomised DFS maze generation algorithm.
         await Task.Delay(delay);
     }
 }

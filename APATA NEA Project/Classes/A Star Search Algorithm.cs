@@ -67,12 +67,15 @@ internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
                 return;
             }
 
+            // Remove and return the cell with the shortest distance from the start.
             Cell current = openSet.ExtractMin();
+
             current.Visited = true;
             visitedCells.Add(current);
 
             await current.PaintCell(currentCellColour, pathfindingDelay);
 
+            // If the current cell is the goal, stop the algorithm and reconstruct the shortest path found.
             if (current == goal)
             {
                 await ReconstructPath(cameFrom, current);
@@ -83,19 +86,23 @@ internal class A_Star_Search_Algorithm : Pathfinding_Algorithms
 
             foreach (Cell neighbour in neighbours)
             {
+                // The distance to a neighbouring cell through the current cell is always the distance to current cell + 1.
                 int tentativeGScore = gScore[current] + 1;
 
+                // If this path to the neighbouring cell is shorter than any previous one, record it!
                 if (tentativeGScore < gScore[neighbour])
                 {
                     cameFrom[neighbour] = current;
                     gScore[neighbour] = tentativeGScore;
                     fScore[neighbour] = tentativeGScore + Heuristic(neighbour);
 
+                    // If the neighbouring cell doesn't have an fScore already associated with it, add the cell to the priority queue.
                     if (!openSet.Contains(neighbour))
                     {
                         openSet.Insert(neighbour, fScore[neighbour]);
                     }
 
+                    // If the neighbouring cell does have an fScore already associated with it, update the cell in the priority queue with its new fScore.
                     else
                     {
                         openSet.DecreaseKey(neighbour, fScore[neighbour]);

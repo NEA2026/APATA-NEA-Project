@@ -61,7 +61,9 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
                 return;
             }
 
+            // Remove and return the cell with the shortest distance from the source.
             Cell current = priorityQueue.ExtractMin();
+
             current.Visited = true;
             visitedCells.Add(current);
 
@@ -71,8 +73,10 @@ internal class Dijkstras_Algorithm : Pathfinding_Algorithms
 
             foreach (Cell neighbour in neighbours)
             {
+                // The distance to a neighbouring cell through the current cell is always the distance to current cell + 1.
                 int alternateDistance = distance[current] + 1;
 
+                // If this path to the neighbouring cell is shorter than any previous one, record it!
                 if (alternateDistance < distance[neighbour])
                 {
                     previous[neighbour] = current;

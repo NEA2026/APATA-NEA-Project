@@ -87,12 +87,14 @@ internal class Maze
         this.Rows = rows;
         this.Columns = columns;
 
+        // The cell width is determined by the number of rows, if the user inputted more rows than columns (or equal to).
         if (rows >= columns)
         {
             CellWidth = scaledMazeSize / rows;
         }
 
-        else
+        // Otherwise, the cell width is determined by the number of columns, as the user inputted more columns than rows.
+        else if (columns > rows)
         {
             CellWidth = scaledMazeSize / columns;
         }
@@ -118,6 +120,7 @@ internal class Maze
     {
         bool finishedDFS = await RunRandomisedDFS(stepping, token);
 
+        // Runs if the RunRandomisedDFS method returns false (DFS is not finished), either if requested to cancel or if stepping.
         if (!finishedDFS)
         {
             return;
@@ -200,21 +203,28 @@ internal class Maze
                 return false;
             }
 
+            // Pop a cell from the stack and make it the current cell.
             current = cellStack.Pop();
+
             await current.PaintCell(currentCellColour, generationDelay);
 
             List<Cell> unvisitedNeighbours = FindUnvisitedNeighbours(current);
 
+            // If the current cell has any neighbours that have not been visited.
             if (unvisitedNeighbours.Count > 0)
             {
+                // Push the current cell to the stack.
                 cellStack.Push(current);
 
+                // Randomly choose one of the unvisited neighbours.
                 Random random = new();
                 int randomUnvisitedNeighbour = random.Next(0, unvisitedNeighbours.Count);
                 Cell next = unvisitedNeighbours[randomUnvisitedNeighbour];
 
+                // Remove the walls between the current cell and the chosen cell.
                 RemoveWalls(current, next);
 
+                // Mark the chosen cell as visited and push it to the stack. 
                 next.Visited = true;
                 cellStack.Push(next);
             }
@@ -237,6 +247,7 @@ internal class Maze
     {
         List<Cell> unvisitedNeighbours = new();
 
+        // If there is a cell to the top of the cell (passed in as a parameter), and it hasn't been visited, add that cell as an unvisited neighbour.
         if (current.Row != 0)
         {
             Cell top = Cells[current.Row - 1, current.Column];
@@ -247,6 +258,7 @@ internal class Maze
             }
         }
 
+        // If there is a cell to the right of the cell (passed in as a parameter), and it hasn't been visited, add that cell as an unvisited neighbour.
         if (current.Column != Columns - 1)
         {
             Cell right = Cells[current.Row, current.Column + 1];
@@ -257,6 +269,7 @@ internal class Maze
             }
         }
 
+        // If there is a cell to the bottom of the cell (passed in as a parameter), and it hasn't been visited, add that cell as an unvisited neighbour.
         if (current.Row != Rows - 1)
         {
             Cell bottom = Cells[current.Row + 1, current.Column];
@@ -267,6 +280,7 @@ internal class Maze
             }
         }
 
+        // If there is a cell to the left of the cell (passed in as a parameter), and it hasn't been visited, add that cell as an unvisited neighbour.
         if (current.Column != 0)
         {
             Cell left = Cells[current.Row, current.Column - 1];
@@ -288,12 +302,14 @@ internal class Maze
     {
         int rowDifference = current.Row - next.Row;
 
+        // The next cell is above the current cell.
         if (rowDifference == 1)
         {
             current.TopWall = false;
             next.BottomWall = false;
         }
 
+        // The next cell is to the bottom of the current cell.
         else if (rowDifference == -1)
         {
             current.BottomWall = false;
@@ -302,12 +318,14 @@ internal class Maze
 
         int columnDifference = current.Column - next.Column;
 
+        // The next cell is to the left of the current cell.
         if (columnDifference == 1)
         {
             current.LeftWall = false;
             next.RightWall = false;
         }
 
+        // The next cell is to the right of the current cell.
         else if (columnDifference == -1)
         {
             current.RightWall = false;
@@ -333,9 +351,12 @@ internal class Maze
     private void RemoveDeadEnds(double percentage)
     {
         List<Cell> deadEnds = FindDeadEnds();
+
+        // Calculates the number of dead ends to remove.
         double multiplier = percentage / 100;
         int numOfDeadEndsToRemove = (int)Math.Round(multiplier * deadEnds.Count, MidpointRounding.AwayFromZero);
 
+        // Randomly choose the dead ends to remove.
         Cell[] randomDeadEnds = new Cell[numOfDeadEndsToRemove];
         Random random = new();
 
@@ -366,6 +387,7 @@ internal class Maze
                 Convert.ToInt32(cell.LeftWall)
             };
 
+            // A cell with 3 walls is a dead end.
             if (walls.Sum() == 3)
             {
                 deadEnds.Add(cell);
@@ -393,10 +415,14 @@ internal class Maze
             bool removed = false;
             while (!removed)
             {
+                // Randomly pick a wall to remove.
                 int randomWall = random.Next(0, 3);
 
+                // Try to remove the wall.
+                // If the wall chosen was already removed in the Randomised DFS algorithm, or is on the edge of the maze, try again.
                 switch (randomWall)
                 {
+                    // Remove the wall above the dead end.
                     case 0:
                         if (cell.TopWall && cell.Row != 0)
                         {
@@ -407,6 +433,7 @@ internal class Maze
                         }
                         break;
 
+                    // Remove the wall to the right of the dead end.
                     case 1:
                         if (cell.RightWall && cell.Column != Columns - 1)
                         {
@@ -417,6 +444,7 @@ internal class Maze
                         }
                         break;
 
+                    // Remove the wall to the bottom of the dead end.
                     case 2:
                         if (cell.BottomWall && cell.Row != Rows - 1)
                         {
@@ -427,6 +455,7 @@ internal class Maze
                         }
                         break;
 
+                    // Remove the wall to the left of the dead end.
                     case 3:
                         if (cell.LeftWall && cell.Column != 0)
                         {
@@ -440,6 +469,7 @@ internal class Maze
             }
         }
 
+        // Triggers the Maze Screen form to repaint itself.
         MazeScreen.Invalidate();
     }
 }

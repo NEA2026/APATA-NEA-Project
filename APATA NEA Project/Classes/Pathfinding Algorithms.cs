@@ -73,24 +73,28 @@ internal abstract class Pathfinding_Algorithms(Maze maze)
     {
         List<Cell> neighbours = new();
 
+        // If there is a cell to the top of the cell (passed in as a parameter), and there is no wall between the cells, add that cell as a neighbour.
         if (cell.Row != 0 && !cell.TopWall)
         {
             Cell top = maze.Cells[cell.Row - 1, cell.Column];
             neighbours.Add(top);
         }
 
+        // If there is a cell to the right of the cell (passed in as a parameter), and there is no wall between the cells, add that cell as a neighbour.
         if (cell.Column != maze.Columns - 1 && !cell.RightWall)
         {
             Cell right = maze.Cells[cell.Row, cell.Column + 1];
             neighbours.Add(right);
         }
 
+        // If there is a cell to the bottom of the cell (passed in as a parameter), and there is no wall between the cells, add that cell as a neighbour.
         if (cell.Row != maze.Rows - 1 && !cell.BottomWall)
         {
             Cell bottom = maze.Cells[cell.Row + 1, cell.Column];
             neighbours.Add(bottom);
         }
 
+        // If there is a cell to the left of the cell (passed in as a parameter), and there is no wall between the cells, add that cell as a neighbour.
         if (cell.Column != 0 && !cell.LeftWall)
         {
             Cell left = maze.Cells[cell.Row, cell.Column - 1];
